@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Prepare Dataset</h2>
+  <form action="{% url 'show_dataset' %}" method="post">
+    {% csrf_token %}
+    <label for="dataset">Select Dataset:</label>
+    <select name="dataset" id="dataset">
+      <option value="iris">Iris Dataset</option>
+      <option value="titanic">Titanic Dataset</option>
+    </select>
+    <button type="submit">Show Dataset</button>
+  </form>
+  <br>
+
+  {% if dataset is not None %}
+    {% if selected_dataset == 'iris' %}
+      <h2 class="hh2">Iris Dataset Preview</h2>
+    {% elif selected_dataset == 'titanic' %}
+      <h2 class="hh2">Titanic Dataset Preview</h2> 
+    {% endif %}
+    <table>
+      <thead>
+        <tr>
+          {% if selected_dataset == 'iris' %}
+            <th>Sepal Length</th>
+            <th>Sepal Width</th>
+            <th>Petal Length</th>
+            <th>Petal Width</th>
+            <th>Species</th>
+          {% elif selected_dataset == 'titanic' %}
+            <th>Pclass</th>
+            <th>Survived</th>
+            <th>Name</th>
+            <th>Sex</th>
+            <th>Age</th>
+            <th>SibSp</th>
+            <th>Parch</th>
+            <th>Ticket</th>
+            <th>Fare</th>
+            <th>Cabin</th>
+            <th>Embarked</th>
+            <th>Boat</th>
+            <th>Body</th>
+            <th>Home/dest</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% if selected_dataset == 'iris' %}
+          {% for row in dataset.values %}
+            <tr>
+                <td>{{ row.0 }}</td>
+                <td>{{ row.1 }}</td>
+                <td>{{ row.2 }}</td>
+                <td>{{ row.3 }}</td>
+                <td>{{ row.4 }}</td>
+            </tr>
+            {% endfor %}
+        {% elif selected_dataset == 'titanic' %}
+          {% for row in dataset.values %}
+            <tr>
+              <td>{{ row.0 }}</td>
+              <td>{{ row.1 }}</td>
+              <td>{{ row.2 }}</td>
+              <td>{{ row.3 }}</td>
+              <td>{{ row.4 }}</td>
+              <td>{{ row.5 }}</td>
+              <td>{{ row.6 }}</td>
+              <td>{{ row.7 }}</td>
+              <td>{{ row.8 }}</td>
+              <td>{{ row.9 }}</td>
+              <td>{{ row.10 }}</td>
+              <td>{{ row.11 }}</td>
+              <td>{{ row.12 }}</td>
+              <td>{{ row.13 }}</td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No dataset selected.</p>
+  {% endif %}
+{% endblock %}

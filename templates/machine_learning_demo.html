@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Machine Learning Demo</h2>
+  
+  <h3>Accuracy: {{ accuracy }}</h3>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Feature 1</th>
+        <th>Feature 2</th>
+        <th>Feature 3</th>
+        <th>Feature 4</th>
+        <th>True Species</th>
+        <th>Predicted Species</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for features, predicted_species in predictions %}
+        <tr>
+          <td>{{ features.0 }}</td>
+          <td>{{ features.1 }}</td>
+          <td>{{ features.2 }}</td>
+          <td>{{ features.3 }}</td>
+          <td>{{ features.4 }}</td>
+          <td>{{ predicted_species }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
