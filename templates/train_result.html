@@ -6,6 +6,11 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Train Model Result</h2>
-    <p>Accuracy: {{ accuracy }}</p>
+    <h1>Train Result</h1>
+    <h2>Accuracy: {{ accuracy }}</h2>
+    <h2>Result:</h2>
+    {{ result|safe }}
+
+
+
 {% endblock %}

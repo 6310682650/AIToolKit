@@ -4,7 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
-
+from sklearn.preprocessing import StandardScaler
+from django.core.paginator import Paginator
 
 
 def index(request):
@@ -17,6 +18,7 @@ def prepare_data(request):
 
 def show_dataset(request):
     dataset = None
+    selected_dataset = None
     
     if request.method == 'POST':
         selected_dataset = request.POST.get('dataset')
@@ -24,8 +26,16 @@ def show_dataset(request):
             dataset = import_iris_dataset()
         elif selected_dataset == 'titanic':
             dataset = import_titanic_dataset()
-    
-    context = {'dataset': dataset, 'selected_dataset': selected_dataset}
+        elif selected_dataset == 'winequality-white':
+            dataset = import_winequality_dataset()
+
+    # paginator = Paginator(dataset, 10)
+
+    # page_number = request.GET.get('page')
+    # page_obj = paginator.get_page(page_number)
+
+    context = {'dataset': dataset,
+               'selected_dataset': selected_dataset}
     return render(request, 'show_dataset.html', context)
 
 
@@ -44,8 +54,16 @@ def import_titanic_dataset():
     
     return dataset
 
+def import_winequality_dataset():
+    file_path = 'ml_tool/datasets/winequality-white.csv'
+    dataset = pd.read_csv(file_path, names=["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], sep=';')
+    dataset['dataset_name'] = 'winequality-white'
+    
+    return dataset
+
 
 def train_model(request):
+    global clf, feature_columns
     if request.method == 'POST':
         dataset = request.POST.get('dataset')
         model = request.POST.get('model')
@@ -56,14 +74,22 @@ def train_model(request):
             dataset = pd.read_csv(file_path, names=column_names)
             X = dataset.drop('species', axis=1)
             y = dataset['species']
-        elif dataset == 'titanic':
-            file_path = 'ml_tool/datasets/titanic.csv'
-            # column_names = ['pclass', 'survived', 'name', 'sex', 'age', 'sibsp', 'parch', 'ticket', 'fare', 'cabin', 'embarked', 'boat', 'body', 'home_dest']
-            column_names = ['pclass', 'survived', 'sex', 'age', 'fare']
-            dataset = pd.read_csv(file_path, names=column_names)
+        elif dataset == 'winequality-white':
+            file_path = 'ml_tool/datasets/winequality-white.csv'
+            column_names = ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"]
+            dataset = pd.read_csv(file_path, sep=';', names=column_names)
+            dataset = dataset.applymap(lambda x: x.split(',')[0] if isinstance(x, str) else x)
+    
+            X = dataset.drop('quality', axis=1)
+            y = dataset['quality']
 
-            X = dataset.drop('survived', axis=1)
-            y = dataset['survived']
+        # elif dataset == 'titanic':
+        #     file_path = 'ml_tool/datasets/titanic.csv'
+        #     column_names = ['pclass', 'survived', 'name', 'sex', 'age', 'sibsp', 'parch', 'ticket', 'fare', 'cabin', 'embarked', 'boat', 'body', 'home_dest']
+        #     dataset = pd.read_csv(file_path, names=column_names)
+            
+        #     X = dataset.drop('survived', axis=1)
+        #     y = dataset['survived']
             
         if model == 'logistic_regression':
             clf = LogisticRegression()
@@ -75,10 +101,35 @@ def train_model(request):
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
+        result = pd.DataFrame({'Predicted': y_pred, 'Actual': y_test})
+        feature_columns = X.columns.tolist()
+
+        for column in feature_columns:
+            result[column] = X_test[column].tolist()
+        result = result.sort_index()
         
-        return render(request, 'train_result.html', {'accuracy': accuracy})
+        return render(request, 'train_result.html', {'accuracy': accuracy, 'result': result.to_html()})
     
     return render(request, 'train.html')
+
+def predict_model(request):
+    global feature_columns
+    if request.method == 'POST':
+        input_features = {}
+        for column in feature_columns:
+            feature_value = request.POST.get(column)
+            input_features[column] = feature_value
+
+        input_data = pd.DataFrame([input_features])
+        if not input_data.empty:
+            predicted_label = clf.predict(input_data)[0]
+        else:
+            predicted_label = None
+
+        return render(request, 'predict.html', {'feature_columns': feature_columns, 'predicted_label': predicted_label})
+
+    return render(request, 'predict.html', {'feature_columns': feature_columns})
+
 
 
 def machine_learning_demo(request):

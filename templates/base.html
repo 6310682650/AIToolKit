@@ -105,6 +105,42 @@
         table tr:hover {
             background-color: #f5f5f5;
         }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+          
+        input[type="text"] {
+            width: 300px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 7px;
+        }
+        
+        input[type="submit"] {
+            padding: 5px 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+          
+        input[type="submit"]:hover {
+            background-color: #fff;
+            color: #333;
+        }
+        select {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            width: 200px;
+          }
+
+
     </style>
 </head>
 <body>
@@ -115,6 +151,7 @@
         <ul>
             <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
             <li><a href="{% url 'train' %}">Train Model</a></li>
+            <li><a href="{% url 'predict' %}">Predict</a></li>
             <li><a href="{% url 'machine_learning_demo' %}">Machine learning demo</a></li>
         </ul>
     </nav>

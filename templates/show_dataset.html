@@ -7,6 +7,7 @@
     <select name="dataset" id="dataset">
       <option value="iris">Iris Dataset</option>
       <option value="titanic">Titanic Dataset</option>
+      <option value="winequality-white">winequality-white Dataset</option>
     </select>
     <button type="submit">Show Dataset</button>
   </form>
@@ -16,7 +17,9 @@
     {% if selected_dataset == 'iris' %}
       <h2 class="hh2">Iris Dataset Preview</h2>
     {% elif selected_dataset == 'titanic' %}
-      <h2 class="hh2">Titanic Dataset Preview</h2> 
+      <h2 class="hh2">Titanic Dataset Preview</h2>
+    {% elif selected_dataset == 'winequality-white' %}
+      <h2 class="hh2">Wine Quality - white Dataset Preview</h2>
     {% endif %}
     <table>
       <thead>
@@ -42,6 +45,20 @@
             <th>Boat</th>
             <th>Body</th>
             <th>Home/dest</th>
+          {% elif selected_dataset == 'winequality-white' %}
+            <th>fixed acidity</th>
+            <th>volatile acidity</th>
+            <th>citric acid</th>
+            <th>residual sugar</th>
+            <th>chlorides</th>
+            <th>free sulfur dioxide</th>
+            <th>total sulfur dioxide</th>
+            <th>density</th>
+            <th>pH</th>
+            <th>sulphates</th>
+            <th>alcohol</th>
+            <th>quality</th>
+
           {% endif %}
         </tr>
       </thead>
@@ -75,9 +92,42 @@
               <td>{{ row.13 }}</td>
             </tr>
           {% endfor %}
+        {% elif selected_dataset == 'winequality-white' %}
+          {% for row in dataset.values %}
+            <tr>
+              <td>{{ row.0 }}</td>
+              <td>{{ row.1 }}</td>
+              <td>{{ row.2 }}</td>
+              <td>{{ row.3 }}</td>
+              <td>{{ row.4 }}</td>
+              <td>{{ row.5 }}</td>
+              <td>{{ row.6 }}</td>
+              <td>{{ row.7 }}</td>
+              <td>{{ row.8 }}</td>
+              <td>{{ row.9 }}</td>
+              <td>{{ row.10 }}</td>
+              <td>{{ row.11 }}</td>
+            </tr>
+          {% endfor %}
         {% endif %}
       </tbody>
     </table>
+    
+    {% comment %} <div class="pagination">
+      <span class="step-links">
+          {% if dataset.has_previous %}
+              <a href="?page=1">&laquo; first</a>
+              <a href="?page={{ dataset.previous_page_number }}">previous</a>
+          {% endif %}
+  
+          <span class="current-page">{{ dataset.number }}</span>
+  
+          {% if dataset.has_next %}
+              <a href="?page={{ dataset.next_page_number }}">next</a>
+              <a href="?page={{ dataset.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+      </span>
+    </div> {% endcomment %}
   {% else %}
     <p>No dataset selected.</p>
   {% endif %}

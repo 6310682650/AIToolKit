@@ -25,4 +25,6 @@ urlpatterns = [
     path('show_dataset/', views.show_dataset, name='show_dataset'),
     path('import_iris_dataset/', views.import_iris_dataset, name='import_iris_dataset'),
     path('machine_learning_demo/', views.machine_learning_demo, name='machine_learning_demo'),
+    #path('test/', views.test_model, name='test'),
+    path('predict/', views.predict_model, name='predict'),
 ]

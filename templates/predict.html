@@ -1,0 +1,19 @@
+<!-- predict.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Predict Model</h2>
+  <form method="POST" action="{% url 'predict' %}">
+    {% csrf_token %}
+    {% for column in feature_columns %}
+    <label for="{{ column }}">{{ column }}:</label>
+    <input type="text" name="{{ column }}" id="{{ column }}" required><br>
+    {% endfor %}
+    <br>
+    <input type="submit" value="Predict">
+  </form>
+  
+  <div class="output-label">
+    <span>{{ predicted_label }}</span>
+  </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+<!-- test.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Test Model</h1>
+    <form method="POST" action="{% url 'test' %}">
+        {% csrf_token %}
+        {% for column in feature_columns %}
+        <label for="{{ column }}">{{ column }}:</label>
+        <input type="text" name="{{ column }}" id="{{ column }}"><br>
+        {% endfor %}
+        <br>
+        <input type="submit" value="Predict">
+    </form>
+    
+    {% if predicted_label %}
+    <h2>Predicted Label:</h2>
+    {{ predicted_label }}
+    {% endif %}
+{% endblock %}
