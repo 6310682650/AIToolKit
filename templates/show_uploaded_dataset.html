@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if dataset %}
+        <h2>Uploaded Dataset Preview</h2>
+        <table>
+            <thead>
+                <tr>
+                    {% for key in dataset.0.keys %}
+                        <th>{{ key }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in dataset %}
+                    <tr>
+                        {% for value in row.values %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No uploaded dataset found.</p>
+    {% endif %}
+{% endblock %}

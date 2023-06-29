@@ -7,6 +7,31 @@
     <select name="dataset" id="dataset">
         <option value="iris">Iris Dataset</option>
         <option value="winequality-white">winequality-white Dataset</option>
+        <option value="uploaded_dataset">Uploaded Dataset</option>
+    </select>
+    {% if uploaded_file %}
+      <input type="hidden" name="uploaded_file" value="{{ uploaded_file }}">
+    {% endif %}
+    <br><br>
+    <label for="model">Select Model:</label>
+    <select name="model" id="model">
+        <option value="logistic_regression">Logistic Regression</option>
+        <option value="decision_tree">Decision Tree</option>
+    </select>
+    <br><br>
+    <button type="submit">Train Model</button>
+  </form>
+{% endblock %}
+
+{% comment %} {% extends 'base.html' %}
+{% block content %}
+  <h2>Train Model</h2>
+  <form method="post" action="{% url 'train' %}">
+    {% csrf_token %}
+    <label for="dataset">Select Dataset:</label>
+    <select name="dataset" id="dataset">
+        <option value="iris">Iris Dataset</option>
+        <option value="winequality-white">winequality-white Dataset</option>
         <option value="titanic">Titanic Dataset</option>
     </select>
     <br><br>
@@ -19,4 +44,4 @@
     <br><br>
     <button type="submit">Train Model</button>
 </form>
-{% endblock %}
+{% endblock %} {% endcomment %}

@@ -138,8 +138,35 @@
             border-radius: 4px;
             box-sizing: border-box;
             width: 200px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
           }
+          
+        .btn:hover {
+            background-color: #45a049;
+        }
 
+        .accuracy {
+            display: inline;
+            margin-right: 20px;
+        }
+          
+        .predict-button {
+            display: inline;
+        }
+          
 
     </style>
 </head>
@@ -151,8 +178,6 @@
         <ul>
             <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
             <li><a href="{% url 'train' %}">Train Model</a></li>
-            <li><a href="{% url 'predict' %}">Predict</a></li>
-            <li><a href="{% url 'machine_learning_demo' %}">Machine learning demo</a></li>
         </ul>
     </nav>
     <main>

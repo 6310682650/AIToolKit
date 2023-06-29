@@ -27,4 +27,5 @@ urlpatterns = [
     path('machine_learning_demo/', views.machine_learning_demo, name='machine_learning_demo'),
     #path('test/', views.test_model, name='test'),
     path('predict/', views.predict_model, name='predict'),
+    path('show_uploaded_dataset/', views.show_uploaded_dataset, name='show_uploaded_dataset'),
 ]

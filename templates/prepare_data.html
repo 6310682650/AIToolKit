@@ -1,20 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Prepare Dataset</h2>
-<form action="{% url 'show_dataset' %}" method="post">
-    {% csrf_token %}
-    <label for="dataset">Select Dataset:</label>
-    <select name="dataset" id="dataset">
-        <option value="iris">Iris Dataset</option>
-        <option value="titanic">Titanic Dataset</option>
-        <option value="winequality-white">winequality-white Dataset</option>
-    </select>
-    <button type="submit">Show Dataset</button>
-</form>
+    <h2>Prepare Dataset</h2>
+    <form action="{% url 'show_dataset' %}" method="post">
+        {% csrf_token %}
+        <label for="dataset">Select Dataset:</label>
+        <select name="dataset" id="dataset">
+            <option value="iris">Iris Dataset</option>
+            <option value="titanic">Titanic Dataset</option>
+            <option value="winequality-white">winequality-white Dataset</option>
+        </select>
+        <button type="submit">Show Dataset</button>
+    </form>
 
-{% comment %} <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="dataset" accept=".csv, .xlsx, .txt">
-    <button type="submit">Upload</button>
-</form> {% endcomment %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="uploaded_file" accept=".csv, .xlsx, .txt">
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if uploaded_file %}
+        <h3>Uploaded File: {{ uploaded_file.name }}</h3>
+        <form action="{% url 'show_uploaded_dataset' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="uploaded_file_name" value="{{ uploaded_file.name }}">
+            <button type="submit">Show Uploaded Dataset</button>
+        </form>
+    {% endif %}
 {% endblock %}

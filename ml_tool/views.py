@@ -6,14 +6,27 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from django.core.paginator import Paginator
-
+import csv
+from django.core.files.storage import FileSystemStorage
 
 def index(request):
     return render(request, 'index.html')
 
 
 def prepare_data(request):
-    return render(request, 'prepare_data.html')
+    uploaded_file = None
+
+    if request.method == 'POST':
+        if 'uploaded_file' in request.FILES:
+            uploaded_file = request.FILES['uploaded_file']
+            fs = FileSystemStorage(location='ml_tool/datasets/')
+            filename = fs.save(uploaded_file.name, uploaded_file)
+
+    context = {
+        'uploaded_file': uploaded_file,
+    }
+
+    return render(request, 'prepare_data.html', context)
 
 
 def show_dataset(request):
@@ -28,16 +41,27 @@ def show_dataset(request):
             dataset = import_titanic_dataset()
         elif selected_dataset == 'winequality-white':
             dataset = import_winequality_dataset()
-
-    # paginator = Paginator(dataset, 10)
-
-    # page_number = request.GET.get('page')
-    # page_obj = paginator.get_page(page_number)
-
+    
     context = {'dataset': dataset,
                'selected_dataset': selected_dataset}
     return render(request, 'show_dataset.html', context)
 
+def show_uploaded_dataset(request):
+    uploaded_file_name = None
+    dataset = None
+
+    if request.method == 'POST':
+        uploaded_file_name = request.POST.get('uploaded_file_name')
+        if uploaded_file_name:
+            file_path = f'ml_tool/datasets/{uploaded_file_name}'
+            dataset = import_dataset(file_path)
+
+    context = {
+        'uploaded_file_name': uploaded_file_name,
+        'dataset': dataset
+    }
+
+    return render(request, 'show_uploaded_dataset.html', context)
 
 def import_iris_dataset():
     file_path = 'ml_tool/datasets/iris.data.csv'
@@ -61,6 +85,26 @@ def import_winequality_dataset():
     
     return dataset
 
+
+# def import_dataset(file_path):
+#     dataset = pd.read_csv(file_path, header=0)
+#     dataset['dataset_name'] = 'uploaded_dataset'
+    
+    return dataset if not dataset.empty else None
+# def import_dataset(file_path):
+#     dataset = pd.read_csv(file_path, header=0)  # ระบุ header=0 เพื่อใช้บรรทัดแรกเป็น column names
+#     dataset['dataset_name'] = 'uploaded_dataset'
+#     return dataset
+
+def import_dataset(file_path):
+    dataset = []
+    
+    with open(file_path, 'r') as file:
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            dataset.append(row)
+    
+    return dataset
 
 def train_model(request):
     global clf, feature_columns
