@@ -1,16 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
     <h2>Prepare Dataset</h2>
-    <form action="{% url 'show_dataset' %}" method="post">
-        {% csrf_token %}
-        <label for="dataset">Select Dataset:</label>
-        <select name="dataset" id="dataset">
-            <option value="iris">Iris Dataset</option>
-            <option value="titanic">Titanic Dataset</option>
-            <option value="winequality-white">winequality-white Dataset</option>
-        </select>
-        <button type="submit">Show Dataset</button>
-    </form>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -18,12 +8,83 @@
         <button type="submit">Upload</button>
     </form>
 
-    {% if uploaded_file %}
-        <h3>Uploaded File: {{ uploaded_file.name }}</h3>
-        <form action="{% url 'show_uploaded_dataset' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="uploaded_file_name" value="{{ uploaded_file.name }}">
-            <button type="submit">Show Uploaded Dataset</button>
-        </form>
-    {% endif %}
+    {% if uploaded_files %}
+    <h3>Dataset</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Show Dataset</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file_name in uploaded_files %}
+            <tr>
+                <td>{{ file_name }}</td>
+                <td>
+                    <form method="post" action="{% url 'show_uploaded_dataset' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="uploaded_file_name" value="{{ file_name }}">
+                        <button type="submit">Show Dataset</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="post" onsubmit="return confirm('Are you sure you want to delete this dataset?')">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_file" value="{{ file_name }}">
+                    <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>Iris Dataset</td>
+                <td>
+                    <form method="post" action="{% url 'show_dataset' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="dataset" value="iris">
+                    <button type="submit">Show Dataset</button>
+                    </form>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Titanic Dataset</td>
+                <td>
+                    <form method="post" action="{% url 'show_dataset' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="dataset" value="titanic">
+                        <button type="submit">Show Dataset</button>
+                    </form>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>winequality-white Dataset</td>
+                <td>
+                    <form method="post" action="{% url 'show_dataset' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="dataset" value="winequality-white">
+                        <button type="submit">Show Dataset</button>
+                    </form>
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
+        <tr>
+            <td>Possitive and Nagative Dataset</td>
+            <td>
+                <form method="post" action="{% url 'show_dataset' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="dataset" value="data">
+                    <button type="submit">Show Dataset</button>
+                </form>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+{% endif %}
+
+
 {% endblock %}

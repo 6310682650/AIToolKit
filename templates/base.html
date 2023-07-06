@@ -9,49 +9,64 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            {% comment %} background-color: khaki; {% endcomment %}
         }
         header {
             background-color: #333;
             color: #fff;
-            padding: 20px;
-            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            {% comment %} text-align: center; {% endcomment %}
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .logo {
+            margin-left: 70px;
+          }
+
+        .logo img {
+            width: 150px;
+            height: 50px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin-right: 70px;
         }
           
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
+        .nav-links li {
         }
           
-        nav ul li {
-            display: inline;
-            margin-left: 20px;
-        }
-          
-        nav ul li a {
-            color: #333;
+        .nav-links a {
             text-decoration: none;
-            padding: 5px 10px;
-            border: 1px solid #333;
-            background-color: #fff;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.2s;
+            display: block;
+            padding: 20px;
         }
           
-        nav ul li a:hover {
-            background-color: #333;
-            color: #fff;
+        .nav-links a:hover {
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.8);
         }
+
+        {% comment %} lll {% endcomment %}
           
         main {
-            padding: 20px;
+            margin-top:90px;
         }
           
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-        }
           
           /* สไตล์เฉพาะสำหรับหน้าต่าง */
         h2 {
@@ -64,7 +79,7 @@
         }
           
         form {
-            margin-bottom: 20px;
+            
         }
           
         textarea {
@@ -166,20 +181,82 @@
         .predict-button {
             display: inline;
         }
+
+        {% comment %} index {% endcomment %}
           
+        .container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-left: 140px;
+        }
+      
+        .description {
+            width: 50%;
+            margin-right: 70px;
+            margin-top:140px;
+          }
+      
+        .recommendation {
+            width: 25%;
+        }
+      
+        h1 {
+            color: #333;
+            font-size:50px;
+        }
+      
+        p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+      
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .index {
+            background-image: url('/static/images/bs2.png');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #E77600;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top:20px;
+          }
+          
+          .cta-button:hover {
+            background-color: #BB670F;
+          }
 
     </style>
 </head>
+
+
 <body>
     <header>
-        <h1>Machine Learning Toolkit</h1>
+        <nav>
+            <div class="logo">
+                {% load static %}
+                <a href="{% url 'index' %}"><img src="{% static 'images\logo.png' %}" alt="Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
+                <li><a href="{% url 'train' %}">Train Model</a></li>
+                <li><a href="{% url 'train_and_predict' %}">train and predict</a></li>
+            </ul>
+          </nav>
     </header>
-    <nav>
-        <ul>
-            <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
-            <li><a href="{% url 'train' %}">Train Model</a></li>
-        </ul>
-    </nav>
     <main>
         {% block content %}
         {% endblock %}

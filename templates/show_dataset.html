@@ -8,6 +8,7 @@
       <option value="iris">Iris Dataset</option>
       <option value="titanic">Titanic Dataset</option>
       <option value="winequality-white">winequality-white Dataset</option>
+      <option value="data">data</option>
     </select>
     <button type="submit">Show Dataset</button>
   </form>
@@ -20,6 +21,8 @@
       <h2 class="hh2">Titanic Dataset Preview</h2>
     {% elif selected_dataset == 'winequality-white' %}
       <h2 class="hh2">Wine Quality - white Dataset Preview</h2>
+    {% elif selected_dataset == 'data' %}
+      <h2 class="hh2">Dataset Preview</h2>
     {% endif %}
     <table>
       <thead>
@@ -59,6 +62,9 @@
             <th>alcohol</th>
             <th>quality</th>
 
+          {% elif selected_dataset == 'data' %}
+            <th></th>
+            <th></th>
           {% endif %}
         </tr>
       </thead>
@@ -109,25 +115,17 @@
               <td>{{ row.11 }}</td>
             </tr>
           {% endfor %}
+
+        {% elif selected_dataset == 'data' %}
+          {% for row in dataset.values %}
+            <tr>
+              <td>{{ row.0 }}</td>
+              <td>{{ row.1 }}</td>
+          {% endfor %}    
         {% endif %}
       </tbody>
     </table>
     
-    {% comment %} <div class="pagination">
-      <span class="step-links">
-          {% if dataset.has_previous %}
-              <a href="?page=1">&laquo; first</a>
-              <a href="?page={{ dataset.previous_page_number }}">previous</a>
-          {% endif %}
-  
-          <span class="current-page">{{ dataset.number }}</span>
-  
-          {% if dataset.has_next %}
-              <a href="?page={{ dataset.next_page_number }}">next</a>
-              <a href="?page={{ dataset.paginator.num_pages }}">last &raquo;</a>
-          {% endif %}
-      </span>
-    </div> {% endcomment %}
   {% else %}
     <p>No dataset selected.</p>
   {% endif %}
