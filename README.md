@@ -1,9 +1,9 @@
 วิธีรันเว็บ# AIToolKit
-ที่ Directory AIToolkit
-สร้าง venv
-python -m venv .venv
-.venv\Scripts\activate
+ที่ Directory AIToolkit \n
+- สร้าง venv \n
+python -m venv .venv \n
+.venv\Scripts\activate \n
 
-รัน server
-python manage.py runserver
-http://127.0.0.1:8000/
+รัน server \n
+python manage.py runserver \n
+http://127.0.0.1:8000/ \n
