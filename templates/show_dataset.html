@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<main>
   <h2>Prepare Dataset</h2>
   <form action="{% url 'show_dataset' %}" method="post">
     {% csrf_token %}
@@ -129,4 +130,6 @@
   {% else %}
     <p>No dataset selected.</p>
   {% endif %}
+
+</main>
 {% endblock %}

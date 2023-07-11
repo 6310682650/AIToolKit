@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<main>
     {% if dataset %}
         <h2>Uploaded Dataset Preview</h2>
         <table>
@@ -23,4 +24,5 @@
     {% else %}
         <p>No uploaded dataset found.</p>
     {% endif %}
+</main>
 {% endblock %}

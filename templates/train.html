@@ -1,35 +1,89 @@
 {% extends 'base.html' %}
+
+{% block head %}
+{% load static %}
+  <script src="{% static 'js/my_script.js' %}"></script>
+{% endblock %}
+
 {% block content %}
-    <h2>Train Model</h2>
-    <form method="post" action="{% url 'train' %}">
-        {% csrf_token %}
-        <label for="dataset">Select Dataset:</label>
-        <select name="dataset" id="dataset">
-            <option value="iris">Iris Dataset</option>
-            <option value="winequality-white">winequality-white Dataset</option>
-            <option value="uploaded_dataset">Uploaded Dataset</option>
-            <option value="data">Data</option>
-        </select>
-        {% if uploaded_file_name %}
-            <input type="hidden" name="uploaded_file_name" value="{{ uploaded_file_name }}">
-        {% endif %}
-        <br><br>
-        <label for="model">Select Model:</label>
-        <select name="model" id="model">
-            <option value="logistic_regression">Logistic Regression</option>
-            <option value="decision_tree">Decision Tree</option>
-            <option value="naive_bayes">Naive Bayes</option>
-        </select>
-        <br><br>
-        <div>
-          <label for="scaling">Scaling:</label>
-          <input type="range" name="scaling" id="scaling" min="0" max="1" step="0.1" value="0">
+<main>
+<br><br><br>
+    <div class="container2">
+      <div class="Train">
+        <h2>Train Model</h2>
+        <form method="post" action="{% url 'train' %}">
+            {% csrf_token %}
+            <label for="dataset">Select Dataset:</label>
+            <select name="dataset" id="dataset">
+                <option value="iris">Iris Dataset</option>
+                <option value="winequality-white">winequality-white Dataset</option>
+                <option value="titanic">Titanic Dataset</option>
+                <option value="data">Data</option>
+                {% for file_name in uploaded_files %}
+                    <option value="{{ file_name }}">{{ file_name }}</option>
+                {% endfor %}
+            </select>
+            {% if uploaded_file_name %}
+                <input type="hidden" name="uploaded_file_name" value="{{ uploaded_file_name }}">
+            {% endif %}
+            <br><br>
+            <label for="model">Select Model:</label>
+            <select name="model" id="model">
+                <option value="logistic_regression">Logistic Regression</option>
+                <option value="decision_tree">Decision Tree</option>
+                <option value="naive_bayes">Naive Bayes</option>
+                <option value="random_forest">Random Forest</option>
+            </select>
+            <br><br>
+            <div class="scaling-container">
+              <label for="scaling">Test size scaling:</label>
+              <input type="range" name="scaling" id="scaling" min="0.1" max="0.9" step="0.1" value="0" oninput="showValue(this.value)">
+              <span id="scaling-value">0.1</span>
+            </div>
+            <br>
+            <button type="submit">Train Model</button>
+          </form>
         </div>
-        <br><br>
-        <button type="submit">Train Model</button>
-    </form>
 
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Dataset</th>
+                <th>Logistic Regression</th>
+                <th>Decision Tree</th>
+                <th>Naive Bayes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for file_name in uploaded_files %}
+              <tr>
+                <td>{{ file_name }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td>Iris</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Titanic</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+        
+
+      </div>
+    </div>
     
-
-  
+</main>
 {% endblock %}

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+<main>
+<br><br><br>
     <h2>Prepare Dataset</h2>
 
     <form method="post" enctype="multipart/form-data">
@@ -7,9 +9,9 @@
         <input type="file" name="uploaded_file" accept=".csv, .xlsx, .txt">
         <button type="submit">Upload</button>
     </form>
+    <br>
 
-    {% if uploaded_files %}
-    <h3>Dataset</h3>
+
     <table>
         <thead>
             <tr>
@@ -84,7 +86,7 @@
             <td></td>
         </tr>
     </table>
-{% endif %}
 
+</main>
 
 {% endblock %}

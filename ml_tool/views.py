@@ -11,7 +11,9 @@ from django.core.files.storage import FileSystemStorage
 import os
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
-
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
 
 def index(request):
     return render(request, 'index.html')
@@ -95,6 +97,33 @@ def show_uploaded_dataset(request):
 
     return render(request, 'show_uploaded_dataset.html', context)
 
+#ลองแก้ฟังก์ชั่น
+# def testsssssssssssssshow_uploaded_dataset(request):
+#     uploaded_file_name = None
+#     dataset = None
+#     uploaded_files = []  # เพิ่มตรงนี้
+
+#     if request.method == 'POST':
+#         uploaded_file_name = request.POST.get('uploaded_file_name')
+#         if uploaded_file_name:
+#             file_path = f'ml_tool/datasets/{uploaded_file_name}'
+#             dataset = import_dataset(file_path)
+
+#     if 'uploaded_files' in request.session:
+#         uploaded_files = request.session['uploaded_files']
+#     else:
+#         uploaded_files = []
+
+
+#     context = {
+#         'uploaded_file_name': uploaded_file_name,
+#         'dataset': dataset,
+#         'uploaded_files': uploaded_files  # เพิ่มตรงนี้
+#     }
+
+#     return render(request, 'show_uploaded_dataset.html', context)
+
+
 def import_iris_dataset():
     file_path = 'ml_tool/datasets/iris.data.csv'
     dataset = pd.read_csv(file_path, names=['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species'])
@@ -124,15 +153,20 @@ def import_pn_dataset():
     
     return dataset
 
+# def iimport_dataset(file_path):
+#     dataset = []
+    
+#     with open(file_path, 'r') as file:
+#         csv_reader = csv.DictReader(file)
+#         for row in csv_reader:
+#             dataset.append(row)
+    
+#     return dataset
+
 def import_dataset(file_path):
-    dataset = []
-    
-    with open(file_path, 'r') as file:
-        csv_reader = csv.DictReader(file)
-        for row in csv_reader:
-            dataset.append(row)
-    
+    dataset = pd.read_csv(file_path)
     return dataset
+
 
 def train_model(request):
     global clf, feature_columns
@@ -140,21 +174,35 @@ def train_model(request):
         dataset = request.POST.get('dataset')
         model = request.POST.get('model')
         #fromthis
-        uploaded_file_name = request.session.get('uploaded_file_name')
+        uploaded_file_names = request.session.get('uploaded_file_names', [])
 
-        if dataset == 'uploaded_dataset' and not uploaded_file_name:
+        if dataset == 'uploaded_dataset' and not uploaded_file_names:
             return render(request, 'train.html')  # ต้องอัพโหลดไฟล์ก่อน
 
         if dataset == 'uploaded_dataset':
-            file_path = os.path.join('ml_tool/datasets/', uploaded_file_name)
-            with open(file_path, 'r') as file:
-                csv_reader = csv.reader(file)
-                column_names = next(csv_reader)  #บรรทัดแรกของไฟล์เป็น column_names
+            datasets = []
+            for uploaded_file_name in uploaded_file_names:
+                file_path = os.path.join('ml_tool/datasets/', uploaded_file_name)
+                with open(file_path, 'r') as file:
+                    csv_reader = csv.reader(file)
+                    column_names = next(csv_reader)  #บรรทัดแรกของไฟล์เป็น column_names
 
-            dataset = pd.read_csv(file_path, names=column_names)
-            target_column = column_names[0]  # ใช้คอลัมน์แรกใน column_names เป็น target_column
-            X = dataset.drop(target_column, axis=1)
-            y = dataset[1]
+                dataset = pd.read_csv(file_path, names=column_names)
+                target_column = column_names[0]  # ใช้คอลัมน์แรกใน column_names เป็น target_column
+                datasets.append(dataset)
+
+            if datasets:
+                dataset = pd.concat(datasets)
+        # if dataset == 'uploaded_dataset':
+        #     file_path = os.path.join('ml_tool/datasets/', uploaded_file_name)
+        #     with open(file_path, 'r') as file:
+        #         csv_reader = csv.reader(file)
+        #         column_names = next(csv_reader)  #บรรทัดแรกของไฟล์เป็น column_names
+
+        #     dataset = pd.read_csv(file_path, names=column_names)
+        #     target_column = column_names[0]  # ใช้คอลัมน์แรกใน column_names เป็น target_column
+        #     X = dataset.drop(target_column, axis=1)
+        #     y = dataset[1]
         #tothis
 
         if dataset == 'iris':
@@ -180,15 +228,13 @@ def train_model(request):
             X = dataset.drop('lebel', axis=1)
             y = dataset['lebel']
 
+        elif dataset == 'titanic':
+            file_path = 'ml_tool/datasets/titanic.csv'
+            column_names = ['pclass', 'survived', 'name', 'sex', 'age', 'sibsp', 'parch', 'ticket', 'fare', 'cabin', 'embarked', 'boat', 'body', 'home_dest']
+            dataset = pd.read_csv(file_path, names=column_names)
             
-
-        # elif dataset == 'titanic':
-        #     file_path = 'ml_tool/datasets/titanic.csv'
-        #     column_names = ['pclass', 'survived', 'name', 'sex', 'age', 'sibsp', 'parch', 'ticket', 'fare', 'cabin', 'embarked', 'boat', 'body', 'home_dest']
-        #     dataset = pd.read_csv(file_path, names=column_names)
-            
-        #     X = dataset.drop('survived', axis=1)
-        #     y = dataset['survived']
+            X = dataset.drop('survived', axis=1)
+            y = dataset['survived']
 
             
         if model == 'logistic_regression':
@@ -197,29 +243,39 @@ def train_model(request):
             clf = DecisionTreeClassifier()
         elif model == 'naive_bayes':
             clf = MultinomialNB()
+        if model == 'random_forest':
+            clf = RandomForestClassifier()
 
-        
 
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        
+        # แปลงเป็นตัวเลข
+        label_encoder = LabelEncoder()
+        for column in X.columns:
+            X[column] = label_encoder.fit_transform(X[column])
+        y = label_encoder.fit_transform(y)
+
+        scaling = float(request.POST.get('scaling', 0))
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=scaling, random_state=42)
+
+
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
+
+        y_pred = label_encoder.inverse_transform(y_pred)
+        y_test = label_encoder.inverse_transform(y_test)
+        
+        
         result = pd.DataFrame({'Predicted': y_pred, 'Actual': y_test})
         feature_columns = X.columns.tolist()
 
         for column in feature_columns:
             result[column] = X_test[column].tolist()
         result = result.sort_index()
-        
 
-            
         return render(request, 'train_result.html', {'accuracy': accuracy, 'result': result.to_html()})
     
     return render(request, 'train.html')
-
-
 
 
 def predict_model(request):
@@ -241,7 +297,7 @@ def predict_model(request):
     return render(request, 'predict.html', {'feature_columns': feature_columns})
 
 
-#ไม่เกี่ยว ลองทำแยกออกมา
+# บรรทัดหลังจากนี้ไม่เกี่ยว ลองทำแยกออกมา
 
 def machine_learning_demo(request):
     file_path = 'ml_tool/datasets/iris.data.csv'

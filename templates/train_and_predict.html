@@ -2,6 +2,8 @@
 {% extends 'base.html' %}
     
 {% block content %}
+<main>
+<br><br><br>
     <h2>Train and Predict</h2>
     <form method="post">
         {% csrf_token %}
@@ -14,5 +16,5 @@
         <p>Text: {{ input_text }}</p>
         <p>Predict: {{ predicted_label }}</p>
     {% endif %}
-
+</main>
 {% endblock %}

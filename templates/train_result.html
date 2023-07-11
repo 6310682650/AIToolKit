@@ -6,9 +6,12 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Train Result</h1>
-    <h2 class="accuracy">Accuracy: {{ accuracy }}</h2>
-    <a href="{% url 'predict' %}" class="btn predict-button">Predict</a>
-    <h2>Result:</h2>
-    {{ result|safe }}
+    <main>
+    <br><br>
+        <h1>Train Result</h1>
+        <h2 class="accuracy">Accuracy: {{ accuracy }}</h2>
+        <a href="{% url 'predict' %}" class="btn predict-button">Predict</a>
+        <h2>Result:</h2>
+        {{ result|safe }}
+    </main>
 {% endblock %}

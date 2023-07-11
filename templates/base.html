@@ -18,7 +18,6 @@
             left: 0;
             width: 100%;
             z-index: 999;
-            {% comment %} text-align: center; {% endcomment %}
         }
 
         nav {
@@ -63,8 +62,8 @@
 
         {% comment %} lll {% endcomment %}
           
-        main {
-            margin-top:90px;
+        main:not(.index) {
+            padding: 80px;
         }
           
           
@@ -194,11 +193,22 @@
         .description {
             width: 50%;
             margin-right: 70px;
-            margin-top:140px;
+            margin-top: 140px;
           }
       
         .recommendation {
             width: 25%;
+        }
+
+        .container2 {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .table-container{
+            width: 60%;
+            margin-top:60px;
         }
       
         h1 {
@@ -221,7 +231,9 @@
             background-size: cover;
             background-position: center;
             height: 100vh;
-            background-color: rgba(255, 255, 255, 0.7);
+            padding: inherit;
+            padding: 0;
+            position: fixed;
         }
         
         .cta-button {
@@ -233,13 +245,74 @@
             border-radius: 4px;
             font-weight: bold;
             margin-top:20px;
-          }
+        }
           
-          .cta-button:hover {
+        .cta-button:hover {
             background-color: #BB670F;
-          }
+        }
+
+        {% comment %} scale {% endcomment %}
+
+        .scaling-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #scaling-value {
+            margin-left: 10px;
+        }
+          
+          
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+          
+        input[type="range"] {
+            width: 200px;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #E0E0E0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+          
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #FF9800;
+            cursor: pointer;
+        }
+          
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #FF9800;
+            cursor: pointer;
+        }
+          
+        input[type="range"]::-ms-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #FF9800;
+            cursor: pointer;
+        }
+          
+        input[type="range"]::-webkit-slider-thumb:hover,
+        input[type="range"]::-moz-range-thumb:hover,
+        input[type="range"]::-ms-thumb:hover {
+            background-color: #F57C00;
+        }
+          
 
     </style>
+    {% block head %}
+    {% endblock %}
 </head>
 
 
@@ -253,14 +326,13 @@
             <ul class="nav-links">
                 <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
                 <li><a href="{% url 'train' %}">Train Model</a></li>
-                <li><a href="{% url 'train_and_predict' %}">train and predict</a></li>
+                
             </ul>
           </nav>
     </header>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    
+    {% block content %}
+    {% endblock %}
 
 </body>
 </html>
