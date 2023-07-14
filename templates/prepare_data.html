@@ -6,11 +6,16 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="file" name="uploaded_file" accept=".csv, .xlsx, .txt">
+        <input type="file" name="uploaded_file" accept=".csv, .xlsx, .txt" title="
+        First row has column headers, and first column is the target variable we want to predict.">
         <button type="submit">Upload</button>
+        <span class="tooltip"> &nbsp(?)
+            <span class="tooltip-text">The training data will be randomly sampled from the dataset.</span>
+        </span>
+        <p class="description_2">* First row of the dataset file contains the column headers, 
+            and the first column represents the target variable we want to predict.</p>
     </form>
     <br>
-
 
     <table>
         <thead>

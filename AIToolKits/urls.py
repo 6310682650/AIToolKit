@@ -28,5 +28,7 @@ urlpatterns = [
     path('predict/', views.predict_model, name='predict'),
     path('show_uploaded_dataset/', views.show_uploaded_dataset, name='show_uploaded_dataset'),
     path('train_and_predict/', views.train_and_predict, name='train_and_predict'),
-
+    # path('result/', views.result, name='result'),
+    # path('result/<str:dataset>/<str:model>/', views.result, name='result'),
+    
 ]

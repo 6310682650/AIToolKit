@@ -14,6 +14,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
+from django.shortcuts import redirect
 
 def index(request):
     return render(request, 'index.html')
@@ -55,6 +56,7 @@ def prepare_data(request):
 
 
 
+
 #this
 def get_uploaded_dataset(file_name):
     file_path = os.path.join('ml_tool/datasets/', file_name)
@@ -80,6 +82,7 @@ def show_dataset(request):
                'selected_dataset': selected_dataset}
     return render(request, 'show_dataset.html', context)
 
+
 def show_uploaded_dataset(request):
     uploaded_file_name = None
     dataset = None
@@ -96,32 +99,6 @@ def show_uploaded_dataset(request):
     }
 
     return render(request, 'show_uploaded_dataset.html', context)
-
-#ลองแก้ฟังก์ชั่น
-# def testsssssssssssssshow_uploaded_dataset(request):
-#     uploaded_file_name = None
-#     dataset = None
-#     uploaded_files = []  # เพิ่มตรงนี้
-
-#     if request.method == 'POST':
-#         uploaded_file_name = request.POST.get('uploaded_file_name')
-#         if uploaded_file_name:
-#             file_path = f'ml_tool/datasets/{uploaded_file_name}'
-#             dataset = import_dataset(file_path)
-
-#     if 'uploaded_files' in request.session:
-#         uploaded_files = request.session['uploaded_files']
-#     else:
-#         uploaded_files = []
-
-
-#     context = {
-#         'uploaded_file_name': uploaded_file_name,
-#         'dataset': dataset,
-#         'uploaded_files': uploaded_files  # เพิ่มตรงนี้
-#     }
-
-#     return render(request, 'show_uploaded_dataset.html', context)
 
 
 def import_iris_dataset():
@@ -153,59 +130,36 @@ def import_pn_dataset():
     
     return dataset
 
-# def iimport_dataset(file_path):
-#     dataset = []
-    
-#     with open(file_path, 'r') as file:
-#         csv_reader = csv.DictReader(file)
-#         for row in csv_reader:
-#             dataset.append(row)
-    
-#     return dataset
-
 def import_dataset(file_path):
-    dataset = pd.read_csv(file_path)
+    dataset = []
+    
+    with open(file_path, 'r') as file:
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            dataset.append(row)
+    
     return dataset
+
+# def iimport_dataset(file_path):
+#     dataset = pd.read_csv(file_path)
+#     return dataset
 
 
 def train_model(request):
     global clf, feature_columns
+    uploaded_files = request.session.get('uploaded_files', set())
     if request.method == 'POST':
         dataset = request.POST.get('dataset')
         model = request.POST.get('model')
-        #fromthis
-        uploaded_file_names = request.session.get('uploaded_file_names', [])
 
-        if dataset == 'uploaded_dataset' and not uploaded_file_names:
-            return render(request, 'train.html')  # ต้องอัพโหลดไฟล์ก่อน
+        if dataset in uploaded_files:
+            dataset = get_uploaded_dataset(dataset)
+            target_column = dataset.columns[0]
+            X = dataset.drop(target_column, axis=1)
+            y = dataset[target_column]
 
-        if dataset == 'uploaded_dataset':
-            datasets = []
-            for uploaded_file_name in uploaded_file_names:
-                file_path = os.path.join('ml_tool/datasets/', uploaded_file_name)
-                with open(file_path, 'r') as file:
-                    csv_reader = csv.reader(file)
-                    column_names = next(csv_reader)  #บรรทัดแรกของไฟล์เป็น column_names
 
-                dataset = pd.read_csv(file_path, names=column_names)
-                target_column = column_names[0]  # ใช้คอลัมน์แรกใน column_names เป็น target_column
-                datasets.append(dataset)
-
-            if datasets:
-                dataset = pd.concat(datasets)
-        # if dataset == 'uploaded_dataset':
-        #     file_path = os.path.join('ml_tool/datasets/', uploaded_file_name)
-        #     with open(file_path, 'r') as file:
-        #         csv_reader = csv.reader(file)
-        #         column_names = next(csv_reader)  #บรรทัดแรกของไฟล์เป็น column_names
-
-        #     dataset = pd.read_csv(file_path, names=column_names)
-        #     target_column = column_names[0]  # ใช้คอลัมน์แรกใน column_names เป็น target_column
-        #     X = dataset.drop(target_column, axis=1)
-        #     y = dataset[1]
-        #tothis
-
-        if dataset == 'iris':
+        elif dataset == 'iris':
             file_path = 'ml_tool/datasets/iris.data.csv'
             column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
             dataset = pd.read_csv(file_path, names=column_names)
@@ -254,6 +208,7 @@ def train_model(request):
         y = label_encoder.fit_transform(y)
 
         scaling = float(request.POST.get('scaling', 0))
+        scaling = 1 - (scaling/100)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=scaling, random_state=42)
 
@@ -275,7 +230,8 @@ def train_model(request):
 
         return render(request, 'train_result.html', {'accuracy': accuracy, 'result': result.to_html()})
     
-    return render(request, 'train.html')
+    return render(request, 'train.html',{'uploaded_files': uploaded_files})
+
 
 
 def predict_model(request):
@@ -402,4 +358,36 @@ def train_and_predict(request):
 
 #         return render(request, 'train_and_predict.html', {'input_text': input_text, 'predicted_label': predicted_label})
 
-#     return render(request, 'train_and_predict.html')
+#     return render(request, 'train_and_predict.html')        
+# 
+    #fromthis
+        # uploaded_file_names = request.session.get('uploaded_file_names', [])
+
+        # if dataset == 'uploaded_dataset' and not uploaded_file_names:
+        #     return render(request, 'train.html')  # ต้องอัพโหลดไฟล์ก่อน
+
+        # if dataset == 'uploaded_dataset':
+        #     datasets = []
+        #     for uploaded_file_name in uploaded_file_names:
+        #         file_path = os.path.join('ml_tool/datasets/', uploaded_file_name)
+        #         with open(file_path, 'r') as file:
+        #             csv_reader = csv.reader(file)
+        #             column_names = next(csv_reader)  #บรรทัดแรกของไฟล์เป็น column_names
+
+        #         dataset = pd.read_csv(file_path, names=column_names)
+        #         target_column = column_names[0]  # ใช้คอลัมน์แรกใน column_names เป็น target_column
+        #         datasets.append(dataset)
+
+        #     if datasets:
+        #         dataset = pd.concat(datasets)
+        # if dataset == 'uploaded_dataset':
+        #     file_path = os.path.join('ml_tool/datasets/', uploaded_file_name)
+        #     with open(file_path, 'r') as file:
+        #         csv_reader = csv.reader(file)
+        #         column_names = next(csv_reader)  #บรรทัดแรกของไฟล์เป็น column_names
+
+        #     dataset = pd.read_csv(file_path, names=column_names)
+        #     target_column = column_names[0]  # ใช้คอลัมน์แรกใน column_names เป็น target_column
+        #     X = dataset.drop(target_column, axis=1)
+        #     y = dataset[1]
+        #tothis
