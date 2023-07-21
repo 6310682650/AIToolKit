@@ -154,7 +154,7 @@
             width: 200px;
         }
         
-        .btn {
+        .btnn {
             display: inline-block;
             padding: 10px 20px;
             font-size: 16px;
@@ -168,7 +168,7 @@
             transition: background-color 0.3s ease;
           }
           
-        .btn:hover {
+        .btnn:hover {
             background-color: #45a049;
         }
 
@@ -193,12 +193,32 @@
         .description {
             width: 50%;
             margin-right: 70px;
-            margin-top: 140px;
+            margin-top: 160px;
           }
       
         .recommendation {
-            width: 25%;
+            margin-top:200px;
+            margin-right:15%;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
         }
+
+        .recommendation a {
+            display: block;
+            padding: 8px 12px;
+            color: #333;
+            text-decoration: none;
+        }
+
+
+          
+        .recommendation a:hover {
+            background-color: #f2f2f2; /* Change background color on hover */
+        }
+
+        
 
         .container2 {
             display: flex;
@@ -308,12 +328,10 @@
         input[type="range"]::-ms-thumb:hover {
             background-color: #F57C00;
         }
-        .description_2{
-            color:orange;
-        }
 
         .tooltip {
             position: relative;
+            vertical-align: top;
             display: inline-block;
             cursor: help;
         }
@@ -339,9 +357,92 @@
             visibility: visible;
             opacity: 1;
         }
-
         
-       
+        .delete{
+            background-color:red;
+        }
+
+        label {
+            display: flex;
+            align-items: baseline;
+        }
+
+        .container_guide {
+            padding: 50px;
+            margin-top: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .container_guide h2 {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .container_guide p {
+            line-height: 1.6;
+        }
+
+        /* Accordion styling */
+        .card {
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .card-header {
+            background-color: #f7f7f7;
+        }
+
+        .card-body {
+            background-color: #fff;
+        }
+
+        .card-body h4 {
+            color: #333;
+        }
+
+        .card-body p {
+            margin-bottom: 0;
+        }
+        
+        .btn-link{
+
+        }
+
+        /* Change the toggle icon */
+        .btn-link.collapsed::after {
+            content: "\f078";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            margin-left: 10px;
+        }
+
+        .btn-link::after {
+            content: "\f077";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            margin-left: 10px;
+        }
+
+        .table_header{
+            cursor: pointer;
+        }
+        
+        /*train*/
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 คอลัมน์ที่มีความกว้างเท่ากัน */
+            gap: 10px; /* ระยะห่างระหว่างคอลัมน์ */
+        }
+          
+        .item {
+            /* สไตล์สำหรับแต่ละคอลัมน์ */
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+        }
         
 
     </style>
@@ -360,7 +461,7 @@
             <ul class="nav-links">
                 <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
                 <li><a href="{% url 'train' %}">Train Model</a></li>
-                
+                <li><a href="{% url 'guide' %}">Guide</a></li>
             </ul>
           </nav>
     </header>

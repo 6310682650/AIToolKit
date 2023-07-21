@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+    
+{% block style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+<main>
+<body>
+    <div class="container_guide">
+        <h2>Prepare Data</h2>
+        <p>
+            เป็นหน้าที่ใช้สำหรับการเตรียม Dataset เพื่อไปใช้ใน Machine Learning
+            ซึ่งสามารถอัพโหลดไฟล์ Dataset เพื่อนำไปเทรน Machine Learning<br>
+            มีรูปแบบคือ แถวแรกของไฟล์จะเป็นส่วนหัวตาราง และคอลลัมน์แรกจะเป็นเป้าหมายที่เราต้องการจะคาดการณ์
+            หรือสามารถใช้ Dataset ที่มีไว้ให้อยู่แล้ว<br>
+            สามารถกดดู dataset ด้วยปุ่ม "show dataset"
+            และสามารถลบ dataset ที่ upload ไปได้ แต่จะไม่สามารถลบ dataset ที่มีมาให้อยู่แล้วได้
+        </p>
+        
+        <h2>Train Model</h2>
+        <p>
+            เลือก Dataset และ Model ที่ต้องการเทรน
+            <br>ปรับ Train Scale โดย Scale จะแบ่งเป็น Train และ Test
+            <br>Train คือชุดข้อมูลที่นำมาฝึก Machine Learning
+            <br>Test คือชุดข้อมูลที่นำมาทดสอบความแม่นยำของ Machine Learning
+        </p>
+        <p>
+            ตัวอย่าง: หากปรับไว้ที่ 80% ระบบจะทำการสุ่มข้อมูลจาก Dataset 80% มา Train และอีก 20% ที่เหลือมา Test
+        </p>
+
+        <h2>Machine Learning Model</h2>
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="logisticRegressionHeading">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#logisticRegressionCollapse" aria-expanded="false" aria-controls="logisticRegressionCollapse">
+                                Logistic Regression Model
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="logisticRegressionCollapse" class="collapse" aria-labelledby="logisticRegressionHeading" data-parent="#accordion">
+                        <div class="card-body">
+                            <h4>โมเดลทำงานอย่างไร</h4>
+                            <p>
+                                Logistic Regression เป็นวิธีการใช้เพื่อจัดหมวดหมู่ข้อมูล โดยมองว่าข้อมูลจะอยู่ในกลุ่มหรือประเภทใด
+                                โดยใช้ฟังก์ชันสัมพัทธ์เพื่อคำนวณความน่าจะเป็น โมเดลเหมาะสำหรับข้อมูลที่แบ่งกลุ่มชัดเจน และมีตัวแปรต้นที่เป็นตัวเลข 
+                                ผลลัพธ์ง่ายต่อการอธิบายและใช้ในการทำนายหรือจัดกลุ่มข้อมูลที่ไม่เคยเห็นมาก่อน
+                            </p>
+                            <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
+                            <p>
+                                Logistic Regression เหมาะสำหรับข้อมูลที่เป็นตัวเลขหรือหมวดหมู่ที่สามารถแยกกลุ่มได้ชัดเจน โดยมีความสามารถในการจัดหมวดหมู่และทำนายผลลัพธ์อย่างรวดเร็วและมีประสิทธิภาพ
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="decisionTreeHeading">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#decisionTreeCollapse" aria-expanded="false" aria-controls="decisionTreeCollapse">
+                                Decision Tree Model
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="decisionTreeCollapse" class="collapse" aria-labelledby="decisionTreeHeading" data-parent="#accordion">
+                        <div class="card-body">
+                            <h4>โมเดลทำงานอย่างไร</h4>
+                            <p>
+                                Decision Tree เป็นอัลกอริทึมที่ใช้สร้างโครงสร้างต้นไม้ในการตัดสินใจและจัดหมวดหมู่ข้อมูล 
+                                โดยการแบ่งกลุ่มข้อมูลด้วยเงื่อนไขต่าง ๆ โมเดลนี้เหมาะสำหรับข้อมูลที่ซับซ้อนและมีความหลากหลาย 
+                                เพราะสามารถตรวจสอบและค้นหาลักษณะที่สำคัญของข้อมูลได้ ในรูปแบบที่ง่ายต่อการอธิบายและเข้าใจ 
+                                และช่วยในการทำนายผลลัพธ์อย่างรวดเร็ว
+                            </p>
+                            <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
+                            <p>
+                                Decision Tree เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถนับได้ 
+                                มีความสามารถในการจัดหมวดหมู่ที่แม่นยำและทำนายผลลัพธ์ได้อย่างมั่นใจ และมีความสามารถในการจับความสัมพันธ์ที่ซับซ้อนระหว่างตัวแปรต้นได้ดีกว่า 
+                                Decision Tree เดียวเพียงอย่างเดียว
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="naiveBayesHeading">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#naiveBayesCollapse" aria-expanded="false" aria-controls="naiveBayesCollapse">
+                                Naive Bayes Model
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="naiveBayesCollapse" class="collapse" aria-labelledby="naiveBayesHeading" data-parent="#accordion">
+                        <div class="card-body">
+                            <h4>โมเดลทำงานอย่างไร</h4>
+                            <p>
+                                Naive Bayes เป็นอัลกอริทึมในการจัดหมวดหมู่ข้อมูล โดยใช้สมมติฐานว่าตัวแปรต้นเป็นอิสระและไม่เชื่อมโยงกันมาก 
+                                โมเดลนี้เหมาะสำหรับข้อมูลที่เป็นข้อความหรือหมวดหมู่ข้อมูลที่สามารถนับได้ และมีความสามารถในการทำนายผลลัพธ์ได้อย่างรวดเร็วและมีประสิทธิภาพ
+                            </p>
+                            <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
+                            <p>
+                                Naive Bayes เหมาะสำหรับข้อมูลที่เป็นข้อความหรือหมวดหมู่ข้อมูลที่สามารถแยกกลุ่มได้ชัดเจน โดยมีความสามารถในการจัดหมวดหมู่และทำนายผลลัพธ์อย่างรวดเร็วและมีประสิทธิภาพ
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="randomForestHeading">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#randomForestCollapse" aria-expanded="false" aria-controls="randomForestCollapse">
+                                Random Forest Model
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="randomForestCollapse" class="collapse" aria-labelledby="randomForestHeading" data-parent="#accordion">
+                        <div class="card-body">
+                            <h4>โมเดลทำงานอย่างไร</h4>
+                            <p>
+                                Random Forest ใช้ในการจัดหมวดหมู่ข้อมูลและทำนาย 
+                                โดยสร้างชุดของ decision trees และสรุปผลลัพธ์จากการตัดสินใจของแต่ละต้นไม้เพื่อให้คำตอบที่ถูกต้องและมั่นใจมากขึ้น 
+                                โมเดลนี้เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถนับได้ 
+                                มีความสามารถในการจัดหมวดหมู่ที่แม่นยำและทำนายผลลัพธ์ได้อย่างมั่นใจ และมีความสามารถในการจับความสัมพันธ์ที่ซับซ้อนระหว่างตัวแปรต้นได้ดีกว่า 
+                                Decision Tree เดียวเพียงอย่างเดียว
+                            </p>
+                            <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
+                            <p>
+                                Random Forest เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถแยกกลุ่มได้ชัดเจน 
+                                มีความสามารถในการจัดหมวดหมู่ที่แม่นยำและทำนายผลลัพธ์อย่างมั่นใจ และมีความสามารถในการจับความสัมพันธ์ที่ซับซ้อนระหว่างตัวแปรต้นได้ดีกว่า Decision Tree เดียวเพียงอย่างเดียว
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</main>
+{% endblock %}

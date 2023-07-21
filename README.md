@@ -7,3 +7,6 @@
 - รัน server
 - python manage.py runserver
 - http://127.0.0.1:8000/
+Superuser
+- Username: Admin
+- Password: password

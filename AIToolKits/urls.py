@@ -20,15 +20,17 @@ from ml_tool import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path('guide', views.guide, name='guide'),
     path('train/', views.train_model, name='train'),
     path('prepare_data/', views.prepare_data, name='prepare_data'),
     path('show_dataset/', views.show_dataset, name='show_dataset'),
-    path('import_iris_dataset/', views.import_iris_dataset, name='import_iris_dataset'),
     path('machine_learning_demo/', views.machine_learning_demo, name='machine_learning_demo'),
     path('predict/', views.predict_model, name='predict'),
     path('show_uploaded_dataset/', views.show_uploaded_dataset, name='show_uploaded_dataset'),
     path('train_and_predict/', views.train_and_predict, name='train_and_predict'),
-    # path('result/', views.result, name='result'),
-    # path('result/<str:dataset>/<str:model>/', views.result, name='result'),
-    
-]
+    path('delete_history/<int:history_id>/', views.delete_history, name='delete_history'),
+    path('delete_all_history/', views.delete_all_history, name='delete_all_history'),
+
+    #path('result/', views.result, name='result'),
+    #path('result/<str:dataset>/<str:model>/', views.show_result, name='result_with_params'),
+    ]

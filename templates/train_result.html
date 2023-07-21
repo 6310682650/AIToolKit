@@ -1,17 +1,31 @@
+
 {% extends 'base.html' %}
 {% load static %}
     
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 {% endblock %}
-
 {% block content %}
     <main>
-    <br><br>
+        <h1>Train Result</h1>
+        <h2 class="accuracy">Accuracy: {{ accuracy }}</h2>
+        <a href="{% url 'predict' %}" class="btnn predict-button">Predict</a>
+        <h2>Result:</h2>
+        {{ result|safe }}
+    </main>
+{% endblock %}
+{% comment %} {% extends 'base.html' %}
+{% load static %}
+    
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+{% block content %}
+    <main>
         <h1>Train Result</h1>
         <h2 class="accuracy">Accuracy: {{ accuracy }}</h2>
         <a href="{% url 'predict' %}" class="btn predict-button">Predict</a>
         <h2>Result:</h2>
         {{ result|safe }}
     </main>
-{% endblock %}
+{% endblock %} {% endcomment %}

@@ -1,24 +1,31 @@
 from django.shortcuts import render
 import pandas as pd
+from django.core.paginator import Paginator
+import csv
+import time
+import datetime
+from django.utils import timezone
+import os
+from django.core.files.storage import FileSystemStorage
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import StandardScaler
-from django.core.paginator import Paginator
-import csv
-from django.core.files.storage import FileSystemStorage
-import os
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import LabelEncoder
 from django.shortcuts import redirect
+import json
+from sklearn.preprocessing import StandardScaler
+from .models import TrainedModelHistory
+
 
 def index(request):
     return render(request, 'index.html')
 
+def guide(request):
+    return render(request, 'guide.html')
 
 def prepare_data(request):
     uploaded_files = []
@@ -140,33 +147,32 @@ def import_dataset(file_path):
     
     return dataset
 
-# def iimport_dataset(file_path):
-#     dataset = pd.read_csv(file_path)
-#     return dataset
 
 
 def train_model(request):
     global clf, feature_columns
     uploaded_files = request.session.get('uploaded_files', set())
+
+
     if request.method == 'POST':
-        dataset = request.POST.get('dataset')
+        dataset_name = request.POST.get('dataset')
         model = request.POST.get('model')
 
-        if dataset in uploaded_files:
-            dataset = get_uploaded_dataset(dataset)
+        if dataset_name in uploaded_files:
+            dataset = get_uploaded_dataset(dataset_name)
             target_column = dataset.columns[0]
             X = dataset.drop(target_column, axis=1)
             y = dataset[target_column]
 
 
-        elif dataset == 'iris':
+        elif dataset_name == 'iris':
             file_path = 'ml_tool/datasets/iris.data.csv'
             column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
             dataset = pd.read_csv(file_path, names=column_names)
             X = dataset.drop('species', axis=1)
             y = dataset['species']
             
-        elif dataset == 'winequality-white':
+        elif dataset_name == 'winequality-white':
             file_path = 'ml_tool/datasets/winequality-white.csv'
             column_names = ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"]
             dataset = pd.read_csv(file_path, sep=';', names=column_names)
@@ -175,14 +181,14 @@ def train_model(request):
             X = dataset.drop('quality', axis=1)
             y = dataset['quality']
 
-        elif dataset == 'data':
+        elif dataset_name == 'data':
             file_path = 'ml_tool/datasets/data.csv'
             column_names = ['text', 'lebel']
             dataset = pd.read_csv(file_path, names=column_names)
             X = dataset.drop('lebel', axis=1)
             y = dataset['lebel']
 
-        elif dataset == 'titanic':
+        elif dataset_name == 'titanic':
             file_path = 'ml_tool/datasets/titanic.csv'
             column_names = ['pclass', 'survived', 'name', 'sex', 'age', 'sibsp', 'parch', 'ticket', 'fare', 'cabin', 'embarked', 'boat', 'body', 'home_dest']
             dataset = pd.read_csv(file_path, names=column_names)
@@ -200,6 +206,7 @@ def train_model(request):
         if model == 'random_forest':
             clf = RandomForestClassifier()
 
+        # show_result_button = request.POST.get('show_result_button')
 
         # แปลงเป็นตัวเลข
         label_encoder = LabelEncoder()
@@ -207,8 +214,8 @@ def train_model(request):
             X[column] = label_encoder.fit_transform(X[column])
         y = label_encoder.fit_transform(y)
 
-        scaling = float(request.POST.get('scaling', 0))
-        scaling = 1 - (scaling/100)
+        scaling_input = float(request.POST.get('scaling', 0))
+        scaling = 1 - (scaling_input/100)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=scaling, random_state=42)
 
@@ -216,6 +223,10 @@ def train_model(request):
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
+        timestamp = timezone.now()
+
+        trained_model = TrainedModelHistory.objects.create(dataset=dataset_name, model=model, accuracy=accuracy, timestamp=timestamp, train_scale=scaling_input)
+
 
         y_pred = label_encoder.inverse_transform(y_pred)
         y_test = label_encoder.inverse_transform(y_test)
@@ -227,12 +238,24 @@ def train_model(request):
         for column in feature_columns:
             result[column] = X_test[column].tolist()
         result = result.sort_index()
-
+        
+        
+    
         return render(request, 'train_result.html', {'accuracy': accuracy, 'result': result.to_html()})
     
-    return render(request, 'train.html',{'uploaded_files': uploaded_files})
+    train_history = TrainedModelHistory.objects.all()
+
+    return render(request, 'train.html',{'uploaded_files': uploaded_files,'train_history': train_history})
+
+def delete_history(request, history_id):
+    history = TrainedModelHistory.objects.get(id=history_id)
+    history.delete()
+    return redirect('train')
 
 
+def delete_all_history(request):
+    TrainedModelHistory.objects.all().delete()
+    return redirect('train')
 
 def predict_model(request):
     global feature_columns
