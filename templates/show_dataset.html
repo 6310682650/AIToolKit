@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <main>
-  <h2>Prepare Dataset</h2>
+  {% comment %} <h2>Prepare Dataset</h2>
   <form action="{% url 'show_dataset' %}" method="post">
     {% csrf_token %}
     <label for="dataset">Select Dataset:</label>
@@ -12,8 +12,8 @@
       <option value="data">data</option>
     </select>
     <button type="submit">Show Dataset</button>
-  </form>
-  <br>
+  </form> {% endcomment %}
+  <br><br><br>
 
   {% if dataset is not None %}
     {% if selected_dataset == 'iris' %}

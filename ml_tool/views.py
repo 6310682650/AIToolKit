@@ -83,7 +83,7 @@ def show_dataset(request):
         elif selected_dataset == 'winequality-white':
             dataset = import_winequality_dataset()
         elif selected_dataset == 'data':
-            dataset = import_pn_dataset()
+            dataset = import_Possitive_and_Nagative_dataset()
     
     context = {'dataset': dataset,
                'selected_dataset': selected_dataset}
@@ -130,10 +130,10 @@ def import_winequality_dataset():
     
     return dataset
 
-def import_pn_dataset():
+def import_Possitive_and_Nagative_dataset():
     file_path = 'ml_tool/datasets/data.csv'
     dataset = pd.read_csv(file_path, names=['text', 'lebel'])
-    dataset['dataset_name'] = 'data'
+    dataset['dataset_name'] = 'Possitive_and_Nagative'
     
     return dataset
 
@@ -148,9 +148,9 @@ def import_dataset(file_path):
     return dataset
 
 
-
+label_encoder = LabelEncoder()
 def train_model(request):
-    global clf, feature_columns
+    global clf, feature_columns, label_encoder
     uploaded_files = request.session.get('uploaded_files', set())
 
 
@@ -181,7 +181,7 @@ def train_model(request):
             X = dataset.drop('quality', axis=1)
             y = dataset['quality']
 
-        elif dataset_name == 'data':
+        elif dataset_name == 'Possitive_and_Nagative':
             file_path = 'ml_tool/datasets/data.csv'
             column_names = ['text', 'lebel']
             dataset = pd.read_csv(file_path, names=column_names)
@@ -209,7 +209,7 @@ def train_model(request):
         # show_result_button = request.POST.get('show_result_button')
 
         # แปลงเป็นตัวเลข
-        label_encoder = LabelEncoder()
+        
         for column in X.columns:
             X[column] = label_encoder.fit_transform(X[column])
         y = label_encoder.fit_transform(y)
@@ -258,7 +258,37 @@ def delete_all_history(request):
     return redirect('train')
 
 def predict_model(request):
-    global feature_columns
+    global feature_columns, label_encoder
+
+    if request.method == 'POST':
+        input_features = {}
+        for column in feature_columns:
+            feature_value = request.POST.get(column)
+            input_features[column] = feature_value
+
+        is_numeric_data = all(value.isdigit() for value in input_features.values())
+
+        if not is_numeric_data:
+            for column in feature_columns:
+                if input_features[column] not in label_encoder.classes_:
+                    input_features[column] = 0
+                else:
+                    input_features[column] = label_encoder.transform([input_features[column]])[0]
+
+        input_data = pd.DataFrame([input_features])
+        if not input_data.empty:
+            predicted_label = label_encoder.inverse_transform(clf.predict(input_data))[0]
+        else:
+            predicted_label = None
+
+        return render(request, 'predict.html', {'feature_columns': feature_columns, 'predicted_label': predicted_label})
+
+    return render(request, 'predict.html', {'feature_columns': feature_columns})
+
+
+def predict_modell(request):
+    global feature_columns, label_encoder
+    
     if request.method == 'POST':
         input_features = {}
         for column in feature_columns:
@@ -267,7 +297,7 @@ def predict_model(request):
 
         input_data = pd.DataFrame([input_features])
         if not input_data.empty:
-            predicted_label = clf.predict(input_data)[0]
+            predicted_label = label_encoder.inverse_transform(clf.predict(input_data))[0]
         else:
             predicted_label = None
 

@@ -4,25 +4,26 @@
 {% load static %}
   <script src="{% static 'js/my_script.js' %}"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
 
   
   {% endblock %}
 
 {% block content %}
 <main>
-<br><br><br>
-    <div>
-        <div class="Train">
-            <h2>Train Model</h2>
-                <form method="post" action="{% url 'train' %}">
+    <br><br><br>
+    <h2>Train Model</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" action="{% url 'train' %}">
                 {% csrf_token %}
-                <div class="column1">
+                <div class="form-group">
                     <label for="dataset">Select Dataset:</label>
-                    <select name="dataset" id="dataset">
+                    <select name="dataset" id="dataset" class="form-control">
                         <option value="iris">Iris Dataset</option>
                         <option value="winequality-white">winequality-white Dataset</option>
                         <option value="titanic">Titanic Dataset</option>
-                        <option value="data">Data</option>
+                        <option value="Possitive_and_Nagative">Possitive and Nagative Dataset</option>
                         {% for file_name in uploaded_files %}
                             <option value="{{ file_name }}">{{ file_name }}</option>
                         {% endfor %}
@@ -31,34 +32,88 @@
                         <input type="hidden" name="uploaded_file_name" value="{{ uploaded_file_name }}">
                     {% endif %}
                 </div>
-
-                <div class="column2">
+                
+            
+        </div>
+            <div class="col-md-4">
+                <div class="form-group">
                     <label for="model">Select Model:</label>
-                    <select name="model" id="model">
+                    <select name="model" id="model" class="form-control">
                         <option value="logistic_regression">Logistic Regression</option>
                         <option value="decision_tree">Decision Tree</option>
                         <option value="naive_bayes">Naive Bayes</option>
                         <option value="random_forest">Random Forest</option>
-                        <option value="linear_regression">linear_regression</option>
+                        
                     </select>
                 </div>
-
-                <div class="scaling-container column3">
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
                     <label for="scaling">Train scale
-                    <span class="tooltip">
-                        <span class="material-symbols-outlined">
-                            help
+                        <span class="tooltip">
+                            <span class="material-symbols-outlined">
+                                help
+                            </span>
+                            <span class="tooltip-text">The training data will be randomly sampled from the dataset.</span>
                         </span>
-                        <span class="tooltip-text">The training data will be randomly sampled from the dataset.</span>
-                    </span></label>
+                    </label>
                     <input type="range" name="scaling" id="scaling" min="10" max="90" step="10" value="0" oninput="showValue(this.value)">
                     <span id="scaling-value"></span> 
                 </div>
-                
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Train Model</button>
+            </div>
+        </form>
+    </div>
+<br><br>
+        {% comment %} <div class="Train">
+            
+                <form method="post" action="{% url 'train' %}">
+                    {% csrf_token %}
+                    <div class="column1">
+                        <label for="dataset">Select Dataset:</label>
+                        <select name="dataset" id="dataset">
+                            <option value="iris">Iris Dataset</option>
+                            <option value="winequality-white">winequality-white Dataset</option>
+                            <option value="titanic">Titanic Dataset</option>
+                            <option value="data">Data</option>
+                            {% for file_name in uploaded_files %}
+                                <option value="{{ file_name }}">{{ file_name }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if uploaded_file_name %}
+                            <input type="hidden" name="uploaded_file_name" value="{{ uploaded_file_name }}">
+                        {% endif %}
+                    </div>
 
-                <button type="submit" class="column4">Train Model</button>
-            </form>
-        </div>
+                    <div class="column2">
+                        <label for="model">Select Model:</label>
+                        <select name="model" id="model">
+                            <option value="logistic_regression">Logistic Regression</option>
+                            <option value="decision_tree">Decision Tree</option>
+                            <option value="naive_bayes">Naive Bayes</option>
+                            <option value="random_forest">Random Forest</option>
+                            <option value="linear_regression">linear_regression</option>
+                        </select>
+                    </div>
+
+                    <div class="scaling-container column3">
+                        <label for="scaling">Train scale
+                        <span class="tooltip">
+                            <span class="material-symbols-outlined">
+                                help
+                            </span>
+                            <span class="tooltip-text">The training data will be randomly sampled from the dataset.</span>
+                        </span></label>
+                        <input type="range" name="scaling" id="scaling" min="10" max="90" step="10" value="0" oninput="showValue(this.value)">
+                        <span id="scaling-value"></span> 
+                    </div>
+                    
+
+                    <button type="submit" class="column4">Train Model</button>
+                </form>
+        </div> {% endcomment %}
 
 
         {% comment %} <div class="table-container">
@@ -140,7 +195,6 @@
               </tbody>
           </table>
       </div> {% endcomment %}
-    </div>
 
     <h2>Training history</h2>
     <table id="myTable">
@@ -167,13 +221,18 @@
             </td>
         </tr>
         {% endfor %}
+        
     </table>
-    
-    <form method="post" action="{% url 'delete_all_history' %}" onsubmit="return confirm('Are you sure you want to clear all history?')">
-        {% csrf_token %}
-        <button type="submit" class="delete">Clear All</button>
-    </form>
-    
+    <br>
+        <form method="post" action="{% url 'delete_all_history' %}" onsubmit="return confirm('Are you sure you want to clear all history?')">
+            {% csrf_token %}
+            <button type="submit" class="clear">Clear History All</button>
+        </form>
+
             
 </main>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 {% endblock %}
