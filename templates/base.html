@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Machine Learning Toolkit</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     {% block style %}{% endblock %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -449,6 +450,32 @@
             background-color: #f0f0f0;
             padding: 10px;
             text-align: center;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;   
+            font-size: 14px;
+            line-height: 1.6;
+        }
+          
+        code {
+            font-size: 14px;
+            background-color: #f4f4f4;
+            padding: 3px 5px;
+        }
+
+
+        .tooltip-icon {
+            font-size: 20px;
+            transition: font-size 0s;
+            padding: 5px;
+        }
+        
+        .tooltip-icon:hover {
+            color:orange;
         }
         
 

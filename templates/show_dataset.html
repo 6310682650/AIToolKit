@@ -1,18 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 <main>
-  {% comment %} <h2>Prepare Dataset</h2>
-  <form action="{% url 'show_dataset' %}" method="post">
-    {% csrf_token %}
-    <label for="dataset">Select Dataset:</label>
-    <select name="dataset" id="dataset">
-      <option value="iris">Iris Dataset</option>
-      <option value="titanic">Titanic Dataset</option>
-      <option value="winequality-white">winequality-white Dataset</option>
-      <option value="data">data</option>
-    </select>
-    <button type="submit">Show Dataset</button>
-  </form> {% endcomment %}
   <br><br><br>
 
   {% if dataset is not None %}
