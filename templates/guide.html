@@ -135,7 +135,43 @@
                     </div>
                 </div>
             </div>
-        </div>
+        <br>
+
+        <h2>Add a Machine Learning Model</h2>
+            <h4>ขั้นตอนที่ 1: นำเข้าโมดูลที่เกี่ยวข้อง</h4>
+            <p>
+                เลือกโมเดลที่ต้องการใช้ ในตัวอย่างนี้เราจะใช้โมเดล Logistic Regression จากไลบรารี <a href="https://scikit-learn.org/stable/" target="_blank">scikit-learn</a>
+            </p>
+            <pre><code>
+        from sklearn.linear_model import LogisticRegression
+            </code></pre>
+            
+            <h4>ขั้นตอนที่ 2: สร้างตัวแปรสำหรับเก็บโมเดล</h4>
+            <p>
+                ต่อมาสร้างตัวแปรที่จะเก็บโมเดล Machine Learning ในฟังก์ชั่น train_model
+            </p>
+            <pre><code>
+        def train_model(request):
+            # สร้างตัวแปรสำหรับเก็บโมเดล
+            clf = LogisticRegression()
+            </code></pre>
+        
+            <h4>โปรแกรมจะเทรนโมเดลที่เราใส่เข้าไป</h4>
+            <p>
+                โค้ดด้านล่างมีการเขียนไว้ในฟังก์ชั่นเรียบร้อยแล้ว
+            </p>
+            <pre><code>
+        def train_model(request):        
+            # เลือก Dataset และแยกข้อมูล Train/Test
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=scaling, random_state=42)
+
+            # เทรนโมเดลที่เพิ่มเข้าไป
+            clf.fit(X_train, y_train)
+
+            # ทดสอบความแม่นยำด้วย test
+            accuracy = clf.score(X_test, y_test)
+            </code></pre>
+        </div>    
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
