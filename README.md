@@ -10,3 +10,9 @@
 Superuser
 - Username: Admin
 - Password: password
+
+Library installed
+- pip install django
+- pip install pandas
+- pip install scikit-learn
+- pip install pycryptodome
