@@ -9,35 +9,129 @@
 <main>
     
 <body>
-    <div class="container_guide">
-        <h2>Prepare Data</h2>
-        <p>
-            เป็นหน้าที่ใช้สำหรับการเตรียม Dataset เพื่อไปใช้ใน Machine Learning
-            ซึ่งสามารถอัพโหลดไฟล์ Dataset เพื่อนำไปเทรน Machine Learning<br>
-            มีรูปแบบคือ แถวแรกของไฟล์จะเป็นส่วนหัวตาราง และคอลลัมน์แรกจะเป็นเป้าหมายที่เราต้องการจะคาดการณ์
-            หรือสามารถใช้ Dataset ที่มีไว้ให้อยู่แล้ว<br>
-            สามารถกดดู dataset ด้วยปุ่ม "show dataset"
-            และสามารถลบ dataset ที่ upload ไปได้ แต่จะไม่สามารถลบ dataset ที่มีมาให้อยู่แล้วได้
-        </p>
-        
-        <h2>Train Model</h2>
-        <p>
-            เลือก Dataset และ Model ที่ต้องการเทรน
-            <br>ปรับ Train Scale โดย Scale จะแบ่งเป็น Train และ Test
-            <br>Train คือชุดข้อมูลที่นำมาฝึก Machine Learning
-            <br>Test คือชุดข้อมูลที่นำมาทดสอบความแม่นยำของ Machine Learning
-        </p>
-        <p>
-            ตัวอย่าง: หากปรับไว้ที่ 80% ระบบจะทำการสุ่มข้อมูลจาก Dataset 80% มา Train และอีก 20% ที่เหลือมา Test
-        </p>
-
-        <h2>Machine Learning Model</h2>
-        
-            <div id="accordion">
+    <div class="row">
+        <nav id="list-example" class="flex-column p-3 col-md-3 position-fixed overflow-auto" style="margin-top: 35px; text-decoration: none;">
+            <nav class="list-group flex-column">
+                <a class="list-group-item list-group-item-action py-3" href="#item-1" style="width:100%; font-size:2vh;">Prepare Data</a>
+                <a class="list-group-item list-group-item-action py-3" href="#item-2" style="width:100%; font-size:2vh;">Train Model</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-2-1" style="width:100%; font-size:1.8vh;">&bull;  How to train model</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-2-2" style="width:100%; font-size:1.8vh;">&bull;  Predict</a>
+                <a class="list-group-item list-group-item-action py-3" href="#item-3" style="width:100%; font-size:2vh;">Machine Learning Model</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-3-1" style="width:100%; font-size:1.8vh;">&bull;  Logistic Regression Model</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-3-2" style="width:100%; font-size:1.8vh;">&bull;  Decision Tree Model</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-3-3" style="width:100%; font-size:1.8vh;">&bull;  Naive Bayes Model</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-3-4" style="width:100%; font-size:1.8vh;">&bull;  Random Forest Model</a>
+                <a class="list-group-item list-group-item-action py-3" href="#item-4" style="width:100%; font-size:2vh;">Add a Machine Learning Model</a>
+                <a class="list-group-item list-group-item-action py-3" href="#item-5" style="width:100%; font-size:2vh;">Manage key</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-5-1" style="width:100%; font-size:1.8vh;">&bull;  Activate Key</a>
+                <a class="list-group-item list-group-item-action ps-5 py-3" href="#item-5-2" style="width:100%; font-size:1.8vh;">&bull;  Reactivate Key</a>
+            </nav>
+        </nav>
+        <div class="container_guide col-md-9 offset-md-3" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example" tabindex="0">
+            <h2 class="mb-3" id="item-1">Prepare Data</h2>
+            <p>
+                เป็นหน้าที่ใช้สำหรับการเตรียม Dataset เพื่อไปใช้ใน Machine Learning
+                ซึ่งสามารถอัพโหลดไฟล์ Dataset เพื่อนำไปเทรน Machine Learning<br>
+                Dataset จะนำมาอัพโหลดจะต้องมีรูปแบบตามที่กำหนด คือ<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;  แถวแรกของไฟล์จะเป็นส่วนหัวตาราง<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;  คอลลัมน์แรกจะเป็นเป้าหมายที่เราต้องการจะคาดการณ์
+                หรือสามารถใช้ Dataset ที่มีไว้ให้อยู่แล้ว<br>
+                สามารถกดดู Dataset ด้วยปุ่ม "show dataset"
+                และสามารถลบ Dataset ที่ upload ไปได้ แต่จะไม่สามารถลบ Dataset ที่มีมาให้อยู่แล้วได้
+            </p>
+            <div id="carouselExampleCaptions" class="carousel carousel-dark slide" data-bs-ride="carousel" style="width:70%; max-height: 70vh;">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                  <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                </div>
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="{% static 'images\ex_prepare_1.png' %}" class="d-block w-100" alt="..." loading="lazy">
+                    <div class="carousel-caption d-none d-md-block" style="background: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.2)); left:0; right:0; bottom:0; width:100%;">
+                      <h5>Prepare Data Page</h5>
+                      <p>อัพโหลด ลบ และดูข้อมูล Dataset สามารถอัพโหลดได้สูงสุด 3 ไฟล์<br>1 ไฟล์เก็บได้สูงสุด 5000 records</p>
+                    </div>
+                  </div>
+                  <div class="carousel-item">
+                    <img src="{% static 'images\ex_prepare_2.png' %}" class="d-block w-100" alt="..." loading="lazy">
+                    <div class="carousel-caption d-none d-md-block" style="background: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.2)); left:0; right:0; bottom:0; width:100%;">
+                      <h5>Dataset Preview</h5>
+                      <p>หน้าแสดง Dataset</p>
+                    </div>
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            
+            <h2 class="mt-5 mb-3" id="item-2">Train Model</h2>
+            <p>ในหน้า Train Model ประกอบด้วย
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&bull;    ส่วนสำหรับเลือก Dataset ,Model และ Train Scale ที่จะใช้ในการเทรน
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&bull;    Train History ตารางเก็บประวัติการเทรน สามารถลบประวัติได้
+            </p>
+            <div style="width:70%; max-height: 70vh;">
+                <img src="{% static 'images\ex_train_1.png' %}" class="img-fluid" alt="..." loading="lazy">
+            </div>
+            <div class="mt-3" id="accordion" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-header" id="trainModelHeading">
+                        <h5 class="mb-0" id="item-2-1">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#trainModelCollapse" aria-expanded="false" aria-controls="trainModelCollapse" style="text-decoration: none;">
+                                How to train model
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="trainModelCollapse" class="collapse" aria-labelledby="trainModelHeading" data-parent="#accordion">
+                        <div class="card-body">
+                            <h5>ขั้นตอนการ Train Model</h5>
+                            <p class="mb-2 ms-4">
+                                &bull;  เลือก Dataset และ Model ที่ต้องการเทรน
+                                <br>&bull;  ปรับ Train Scale โดย Scale จะแบ่งเป็น Train และ Test
+                            </p>
+                            <p class="mb-2 ms-4">
+                                Note:
+                                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;    Train คือชุดข้อมูลที่นำมาฝึก Machine Learning
+                                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;    Test คือชุดข้อมูลที่นำมาทดสอบความแม่นยำของ Machine Learning
+                            </p>
+                            <p class="mb-2">
+                                ตัวอย่าง: หากปรับไว้ที่ 80% ระบบจะทำการสุ่มข้อมูลจาก Dataset 80% มา Train และอีก 20% ที่เหลือมา Test
+                            </p>
+                            <div style="width:70%; max-height: 70vh;">
+                                <img src="{% static 'images\ex_train_1.gif' %}" class="img-fluid" alt="..."  loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="predictHeading">
+                        <h5 class="mb-0" id="item-2-2">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#predictCollapse" aria-expanded="false" aria-controls="predictCollapse" style="text-decoration: none;">
+                                Predict
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="predictCollapse" class="collapse" aria-labelledby="predictHeading" data-parent="#accordion">
+                        <div class="card-body">
+                            <p class="mt-3 mb-2">
+                                หลังจากการ Train จะปรากฏปุ่มให้ไปยังหน้า Predict ได้
+                            </p>
+                            <div style="width:70%; max-height: 70vh;">
+                                <img src="{% static 'images\ex_train_2.gif' %}" class="img-fluid" alt="..." loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h2 class="mt-5 mb-3" id="item-3">Machine Learning Model</h2>
+            <div id="accordion" style="text-decoration: none;">
                 <div class="card">
                     <div class="card-header" id="logisticRegressionHeading">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#logisticRegressionCollapse" aria-expanded="false" aria-controls="logisticRegressionCollapse">
+                        <h5 class="mb-0" id="item-3-1">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#logisticRegressionCollapse" aria-expanded="false" aria-controls="logisticRegressionCollapse" style="text-decoration: none;">
                                 Logistic Regression Model
                             </button>
                         </h5>
@@ -45,14 +139,14 @@
                     <div id="logisticRegressionCollapse" class="collapse" aria-labelledby="logisticRegressionHeading" data-parent="#accordion">
                         <div class="card-body">
                             <h4>โมเดลทำงานอย่างไร</h4>
-                            <p>
-                                Logistic Regression เป็นวิธีการใช้เพื่อจัดหมวดหมู่ข้อมูล โดยมองว่าข้อมูลจะอยู่ในกลุ่มหรือประเภทใด
+                            <p class="mb-3">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logistic Regression เป็นวิธีการใช้เพื่อจัดหมวดหมู่ข้อมูล โดยมองว่าข้อมูลจะอยู่ในกลุ่มหรือประเภทใด
                                 โดยใช้ฟังก์ชันสัมพัทธ์เพื่อคำนวณความน่าจะเป็น โมเดลเหมาะสำหรับข้อมูลที่แบ่งกลุ่มชัดเจน และมีตัวแปรต้นที่เป็นตัวเลข 
                                 ผลลัพธ์ง่ายต่อการอธิบายและใช้ในการทำนายหรือจัดกลุ่มข้อมูลที่ไม่เคยเห็นมาก่อน
                             </p>
                             <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
                             <p>
-                                Logistic Regression เหมาะสำหรับข้อมูลที่เป็นตัวเลขหรือหมวดหมู่ที่สามารถแยกกลุ่มได้ชัดเจน โดยมีความสามารถในการจัดหมวดหมู่และทำนายผลลัพธ์อย่างรวดเร็วและมีประสิทธิภาพ
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logistic Regression เหมาะสำหรับข้อมูลที่เป็นตัวเลขหรือหมวดหมู่ที่สามารถแยกกลุ่มได้ชัดเจน โดยมีความสามารถในการจัดหมวดหมู่และทำนายผลลัพธ์อย่างรวดเร็วและมีประสิทธิภาพ
                             </p>
                         </div>
                     </div>
@@ -60,8 +154,8 @@
 
                 <div class="card">
                     <div class="card-header" id="decisionTreeHeading">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#decisionTreeCollapse" aria-expanded="false" aria-controls="decisionTreeCollapse">
+                        <h5 class="mb-0" id="item-3-2">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#decisionTreeCollapse" aria-expanded="false" aria-controls="decisionTreeCollapse" style="text-decoration: none;">
                                 Decision Tree Model
                             </button>
                         </h5>
@@ -69,15 +163,15 @@
                     <div id="decisionTreeCollapse" class="collapse" aria-labelledby="decisionTreeHeading" data-parent="#accordion">
                         <div class="card-body">
                             <h4>โมเดลทำงานอย่างไร</h4>
-                            <p>
-                                Decision Tree เป็นอัลกอริทึมที่ใช้สร้างโครงสร้างต้นไม้ในการตัดสินใจและจัดหมวดหมู่ข้อมูล 
+                            <p class="mb-3">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decision Tree เป็นอัลกอริทึมที่ใช้สร้างโครงสร้างต้นไม้ในการตัดสินใจและจัดหมวดหมู่ข้อมูล 
                                 โดยการแบ่งกลุ่มข้อมูลด้วยเงื่อนไขต่าง ๆ โมเดลนี้เหมาะสำหรับข้อมูลที่ซับซ้อนและมีความหลากหลาย 
                                 เพราะสามารถตรวจสอบและค้นหาลักษณะที่สำคัญของข้อมูลได้ ในรูปแบบที่ง่ายต่อการอธิบายและเข้าใจ 
                                 และช่วยในการทำนายผลลัพธ์อย่างรวดเร็ว
                             </p>
                             <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
                             <p>
-                                Decision Tree เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถนับได้ 
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decision Tree เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถนับได้ 
                                 มีความสามารถในการจัดหมวดหมู่ที่แม่นยำและทำนายผลลัพธ์ได้อย่างมั่นใจ และมีความสามารถในการจับความสัมพันธ์ที่ซับซ้อนระหว่างตัวแปรต้นได้ดีกว่า 
                                 Decision Tree เดียวเพียงอย่างเดียว
                             </p>
@@ -87,8 +181,8 @@
 
                 <div class="card">
                     <div class="card-header" id="naiveBayesHeading">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#naiveBayesCollapse" aria-expanded="false" aria-controls="naiveBayesCollapse">
+                        <h5 class="mb-0" id="item-3-3">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#naiveBayesCollapse" aria-expanded="false" aria-controls="naiveBayesCollapse" style="text-decoration: none;">
                                 Naive Bayes Model
                             </button>
                         </h5>
@@ -96,13 +190,13 @@
                     <div id="naiveBayesCollapse" class="collapse" aria-labelledby="naiveBayesHeading" data-parent="#accordion">
                         <div class="card-body">
                             <h4>โมเดลทำงานอย่างไร</h4>
-                            <p>
-                                Naive Bayes เป็นอัลกอริทึมในการจัดหมวดหมู่ข้อมูล โดยใช้สมมติฐานว่าตัวแปรต้นเป็นอิสระและไม่เชื่อมโยงกันมาก 
+                            <p class="mb-3">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Naive Bayes เป็นอัลกอริทึมในการจัดหมวดหมู่ข้อมูล โดยใช้สมมติฐานว่าตัวแปรต้นเป็นอิสระและไม่เชื่อมโยงกันมาก 
                                 โมเดลนี้เหมาะสำหรับข้อมูลที่เป็นข้อความหรือหมวดหมู่ข้อมูลที่สามารถนับได้ และมีความสามารถในการทำนายผลลัพธ์ได้อย่างรวดเร็วและมีประสิทธิภาพ
                             </p>
                             <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
                             <p>
-                                Naive Bayes เหมาะสำหรับข้อมูลที่เป็นข้อความหรือหมวดหมู่ข้อมูลที่สามารถแยกกลุ่มได้ชัดเจน โดยมีความสามารถในการจัดหมวดหมู่และทำนายผลลัพธ์อย่างรวดเร็วและมีประสิทธิภาพ
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Naive Bayes เหมาะสำหรับข้อมูลที่เป็นข้อความหรือหมวดหมู่ข้อมูลที่สามารถแยกกลุ่มได้ชัดเจน โดยมีความสามารถในการจัดหมวดหมู่และทำนายผลลัพธ์อย่างรวดเร็วและมีประสิทธิภาพ
                             </p>
                         </div>
                     </div>
@@ -110,8 +204,8 @@
 
                 <div class="card">
                     <div class="card-header" id="randomForestHeading">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#randomForestCollapse" aria-expanded="false" aria-controls="randomForestCollapse">
+                        <h5 class="mb-0" id="item-3-4">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#randomForestCollapse" aria-expanded="false" aria-controls="randomForestCollapse" style="text-decoration: none;">
                                 Random Forest Model
                             </button>
                         </h5>
@@ -119,8 +213,8 @@
                     <div id="randomForestCollapse" class="collapse" aria-labelledby="randomForestHeading" data-parent="#accordion">
                         <div class="card-body">
                             <h4>โมเดลทำงานอย่างไร</h4>
-                            <p>
-                                Random Forest ใช้ในการจัดหมวดหมู่ข้อมูลและทำนาย 
+                            <p class="mb-3">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Random Forest ใช้ในการจัดหมวดหมู่ข้อมูลและทำนาย 
                                 โดยสร้างชุดของ decision trees และสรุปผลลัพธ์จากการตัดสินใจของแต่ละต้นไม้เพื่อให้คำตอบที่ถูกต้องและมั่นใจมากขึ้น 
                                 โมเดลนี้เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถนับได้ 
                                 มีความสามารถในการจัดหมวดหมู่ที่แม่นยำและทำนายผลลัพธ์ได้อย่างมั่นใจ และมีความสามารถในการจับความสัมพันธ์ที่ซับซ้อนระหว่างตัวแปรต้นได้ดีกว่า 
@@ -128,51 +222,97 @@
                             </p>
                             <h4>โมเดลเหมาะกับข้อมูลแบบไหน</h4>
                             <p>
-                                Random Forest เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถแยกกลุ่มได้ชัดเจน 
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Random Forest เหมาะสำหรับข้อมูลที่มีความซับซ้อนและความหลากหลาย เช่น ข้อมูลที่มีตัวแปรต้นที่เป็นตัวเลขหรือหมวดหมู่ข้อมูลที่สามารถแยกกลุ่มได้ชัดเจน 
                                 มีความสามารถในการจัดหมวดหมู่ที่แม่นยำและทำนายผลลัพธ์อย่างมั่นใจ และมีความสามารถในการจับความสัมพันธ์ที่ซับซ้อนระหว่างตัวแปรต้นได้ดีกว่า Decision Tree เดียวเพียงอย่างเดียว
                             </p>
                         </div>
                     </div>
                 </div>
+                <div class="card">
+                    <h2  class="mt-5 mb-3" id="item-4">Add a Machine Learning Model</h2>
+                    <h4>ขั้นตอนที่ 1: นำเข้าโมดูลที่เกี่ยวข้อง</h4>
+                    <p>
+                        เลือกโมเดลที่ต้องการใช้ ในตัวอย่างนี้เราจะใช้โมเดล Logistic Regression จากไลบรารี <a href="https://scikit-learn.org/stable/" target="_blank">scikit-learn</a>
+                    </p>
+                    <pre><code>from sklearn.linear_model import LogisticRegression</code></pre>
+
+                    <h4>ขั้นตอนที่ 2: สร้างตัวแปรสำหรับเก็บโมเดล</h4>
+                    <p>ต่อมาสร้างตัวแปรที่จะเก็บโมเดล Machine Learning ในฟังก์ชั่น train_model</p>
+                    <pre><code>
+def train_model(request):
+    # สร้างตัวแปรสำหรับเก็บโมเดล
+    clf = LogisticRegression()
+                    </code></pre>
+
+                    <h4>โปรแกรมจะเทรนโมเดลที่เราใส่เข้าไป</h4>
+                    <p>
+                        โค้ดด้านล่างมีการเขียนไว้ในฟังก์ชั่นเรียบร้อยแล้ว
+                    </p>
+                    <pre><code>
+def train_model(request):        
+    # เลือก Dataset และแยกข้อมูล Train/Test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=scaling, random_state=42)
+
+    # เทรนโมเดลที่เพิ่มเข้าไป
+    clf.fit(X_train, y_train)
+
+    # ทดสอบความแม่นยำด้วย test
+    accuracy = clf.score(X_test, y_test)
+                    </code></pre>
+                </div>           
             </div>
-        <br>
-
-        <h2>Add a Machine Learning Model</h2>
-            <h4>ขั้นตอนที่ 1: นำเข้าโมดูลที่เกี่ยวข้อง</h4>
-            <p>
-                เลือกโมเดลที่ต้องการใช้ ในตัวอย่างนี้เราจะใช้โมเดล Logistic Regression จากไลบรารี <a href="https://scikit-learn.org/stable/" target="_blank">scikit-learn</a>
-            </p>
-            <pre><code>
-        from sklearn.linear_model import LogisticRegression
-            </code></pre>
-            
-            <h4>ขั้นตอนที่ 2: สร้างตัวแปรสำหรับเก็บโมเดล</h4>
-            <p>
-                ต่อมาสร้างตัวแปรที่จะเก็บโมเดล Machine Learning ในฟังก์ชั่น train_model
-            </p>
-            <pre><code>
-        def train_model(request):
-            # สร้างตัวแปรสำหรับเก็บโมเดล
-            clf = LogisticRegression()
-            </code></pre>
-        
-            <h4>โปรแกรมจะเทรนโมเดลที่เราใส่เข้าไป</h4>
-            <p>
-                โค้ดด้านล่างมีการเขียนไว้ในฟังก์ชั่นเรียบร้อยแล้ว
-            </p>
-            <pre><code>
-        def train_model(request):        
-            # เลือก Dataset และแยกข้อมูล Train/Test
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=scaling, random_state=42)
-
-            # เทรนโมเดลที่เพิ่มเข้าไป
-            clf.fit(X_train, y_train)
-
-            # ทดสอบความแม่นยำด้วย test
-            accuracy = clf.score(X_test, y_test)
-            </code></pre>
-        </div>    
+            <h2 class="mt-5 mb-3" id="item-5">Manage Key</h2>
+            <div id="accordion" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-header" id="activateKeyHeading">
+                        <h5 class="mb-0" id="item-5-1">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#activateKeyCollapse" aria-expanded="false" aria-controls="activateKeyCollapse"  style="text-decoration: none;">
+                                Activate Key
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="activateKeyCollapse" class="collapse" aria-labelledby="activateKeyHeading" data-parent="#accordion">
+                        <div class="card-body ms-3">
+                            <h4 class="mt-2">การ Activate key เพื่อใช้งาน Machine Learning Tool kit</h4>
+                            <p class="mb-4">
+                                
+                                <br>&bull;  ไปยังหน้า <a href="{% url 'index' %}">Home</a>
+                                <br>&bull;  คลิกรูปกุญแจที่มุมขวาบน และนำคีย์ที่ได้รับกรอกลงไป
+                                <div style="width:70%; max-height: 70vh;">
+                                    <img src="{% static 'images\ex_key_1.gif' %}" class="img-fluid" alt="..." loading="lazy">
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="reactivateKeyHeading">
+                        <h5 class="mb-0" id="item-5-2">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#reactivateKeyCollapse" aria-expanded="false" aria-controls="reactivateKeyCollapse"  style="text-decoration: none;">
+                                Reactivate Key
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="reactivateKeyCollapse" class="collapse" aria-labelledby="reactivateKeyHeading" data-parent="#accordion">
+                        <div class="card-body ms-3">
+                            <h4 class="mt-2">การ Reactivate key เมื่อคีย์เดิมใกล้ถึงวันหมดอายุ</h4>
+                            <p class="mb-4">
+                                
+                                <br>&bull;  ไปยังหน้า <a href="{% url 'manage' %}">Manage key</a> โดยคลิกรูปกุญแจที่มุมขวาบน เพื่อยกเลิกการใช้คีย์ปัจจุบันก่อน
+                                <br>&bull;  เมื่อกดเสร็จหน้าจะถูกเปลี่ยนกลับไปยังหน้า <a href="{% url 'index' %}">Home</a>
+                                <div style="width:70%; max-height: 70vh;">
+                                    <img src="{% static 'images\ex_key_2.gif' %}" class="img-fluid" alt="..." loading="lazy">
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    
+    
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

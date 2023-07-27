@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-
 {% block head %}
 {% load static %}
     <script src="{% static 'js/my_script.js' %}"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="{% static 'js/my_script.js' %}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   
@@ -54,12 +54,6 @@
                         <span data-toggle="tooltip" data-placement="top" title="The training data will be randomly sampled from the dataset.">
                             <i class="fas fa-question-circle tooltip-icon"></i>
                         </span>
-                        {% comment %} <span class="tooltip">
-                            <span class="material-symbols-outlined">
-                                help
-                            </span>
-                            <span class="tooltip-text">The training data will be randomly sampled from the dataset.</span>
-                        </span> {% endcomment %}
                     </label>
                     <input type="range" name="scaling" id="scaling" min="10" max="90" step="10" value="0" oninput="showValue(this.value)">
                     <span id="scaling-value"></span> 

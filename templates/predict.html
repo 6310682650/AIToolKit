@@ -4,19 +4,28 @@
 {% block content %}
 <main>
   <br><br><br>
-    <h2>Predict Model</h2>
-    <form method="POST" action="{% url 'predict' %}">
-      {% csrf_token %}
-      {% for column in feature_columns %}
-      <label for="{{ column }}">{{ column }}:</label>
-      <input type="text" name="{{ column }}" id="{{ column }}" required><br>
-      {% endfor %}
-      <br>
-      <input type="submit" value="Predict">
-    </form>
-    
-    <div class="output-label">
-      <span>{{ predicted_label }}</span>
+  <div class="container-fluid d-flex justify-content-center align-items-center">
+    <div class="box p-4">
+      <h2 class="text-center mb-5">Predict Model</h2>
+      <form method="POST" action="{% url 'predict' %}">
+        {% csrf_token %}
+        {% for column in feature_columns %}
+        <div class="mb-2">
+          <label class="col-form-label" for="{{ column }}">{{ column }}:</label>
+          <input class="form-control" type="text" name="{{ column }}" id="{{ column }}" required>
+        </div>
+        {% endfor %}
+        <div class="my-5">
+          <input type="submit" value="Predict" class="col-md-12 py-2">
+        </div>
+      </form>
+      <div class="output-label mt-3 text-center">
+        {% if predicted_label %}
+          <h5>Result : {{ predicted_label }}</h5>
+        {% endif %}
+      </div>
     </div>
+  </div>
+    
 </main>
 {% endblock %}

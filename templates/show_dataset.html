@@ -5,13 +5,41 @@
 
   {% if dataset is not None %}
     {% if selected_dataset == 'iris' %}
-      <h2 class="hh2">Iris Dataset Preview</h2>
+      <div class="row d-flex justify-content-start" >
+          <h2 class="hh2 col-auto mb-5 me-2">Iris Dataset Preview</h2>
+          <form class="col-auto" method="post" action="{% url 'show_uploaded_dataset' %}">
+              {% csrf_token %}
+              <input type="hidden" name="backToPrep" id="backToPrep" value="">
+              <button type="submit">Back</button>
+          </form>
+      </div>
     {% elif selected_dataset == 'titanic' %}
-      <h2 class="hh2">Titanic Dataset Preview</h2>
+      <div class="row d-flex justify-content-start" >
+          <h2 class="hh2 col-auto mb-5 me-2">Titanic Dataset Preview</h2>
+          <form class="col-auto" method="post" action="{% url 'show_uploaded_dataset' %}">
+              {% csrf_token %}
+              <input type="hidden" name="backToPrep" id="backToPrep" value="">
+              <button type="submit">Back</button>
+          </form>
+      </div>
     {% elif selected_dataset == 'winequality-white' %}
-      <h2 class="hh2">Wine Quality - white Dataset Preview</h2>
+      <div class="row d-flex justify-content-start" >
+          <h2 class="hh2 col-auto mb-5 me-2">Wine Quality - white Dataset Preview</h2>
+          <form class="col-auto" method="post" action="{% url 'show_uploaded_dataset' %}">
+              {% csrf_token %}
+              <input type="hidden" name="backToPrep" id="backToPrep" value="">
+              <button type="submit">Back</button>
+          </form>
+      </div>
     {% elif selected_dataset == 'data' %}
-      <h2 class="hh2">Dataset Preview</h2>
+      <div class="row d-flex justify-content-start" >
+          <h2 class="hh2 col-auto mb-5 me-2">Dataset Preview</h2>
+          <form class="col-auto" method="post" action="{% url 'show_uploaded_dataset' %}">
+              {% csrf_token %}
+              <input type="hidden" name="backToPrep" id="backToPrep" value="">
+              <button type="submit">Back</button>
+          </form>
+      </div>
     {% endif %}
     <table>
       <thead>

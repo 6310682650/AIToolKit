@@ -31,6 +31,10 @@ urlpatterns = [
     path('delete_history/<int:history_id>/', views.delete_history, name='delete_history'),
     path('delete_all_history/', views.delete_all_history, name='delete_all_history'),
 
+    path('manage/', views.manage, name='manage'),
+    path('get_key_status/', views.get_key_status, name='get_key_status'),
+    path('response/',views.response_activated, name="response_activated"),
+    path('back_to_prepare_date/',views.back_to_prepare_date,name="back_to_prepare_date")
     #path('result/', views.result, name='result'),
     #path('result/<str:dataset>/<str:model>/', views.show_result, name='result_with_params'),
     ]

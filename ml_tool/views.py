@@ -20,16 +20,160 @@ import json
 from sklearn.preprocessing import StandardScaler
 from .models import TrainedModelHistory
 
+from django.template.context_processors import csrf
+import datetime
+import random
+import string
+import re
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+from base64 import b64encode, b64decode
+from django.http import JsonResponse
+
 
 def index(request):
-    return render(request, 'index.html')
+    isActivated = request.session.get('isActivated', False)
+    isInCorrect = request.session.get('isInCorrect', 0)
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.' and isActivated:
+        return expired_key(request)
+    else:
+        if request.method == 'POST' :
+            if 'activate_key' in request.POST:
+                request.session['isInCorrect'] = isInCorrect
+                return handle_activate_key(request)
+            elif 'reActivate' in request.POST:
+                reset_activation(request)
+        else:
+            request.session['isInCorrect'] = 0
+            
+        if request.method == 'POST' and 'reActivate' in request.POST:
+            request.session['isActivated'] = False
+            request.session['isInCorrect'] = 0
+            request.session['keyActivate'] = ''
+            request.session['keyShowing'] = ''
+        
+        isActivated = request.session.get('isActivated', False)
+        isInCorrect = request.session.get('isInCorrect', 0)
+        keyActivate = request.session.get('keyActivate','')
+        keyShowing = request.session.get('keyShowing','')
+        
+        context = {
+            'isActivated' : isActivated,
+            'isInCorrect' : isInCorrect,
+            'keyActivate' : keyActivate,
+            'keyShowing' : keyShowing,
+        }
+        return render(request, 'index.html',context)
+    
+def expired_key(request):
+    reset_activation(request)
+    return redirect('index')
+
+def reset_activation(request):
+    request.session['isActivated'] = False
+    request.session['isInCorrect'] = 0
+    request.session['keyActivate'] = ''
+    request.session['keyShowing'] = ''
+
+def handle_activate_key(request):
+    temp_activate_key = request.POST.get('activate_key', '')
+    isInCorrect = request.session.get('isInCorrect', 0)
+    print("temp_activate_key : ",temp_activate_key)
+    pattern_1 = r'^[A-Za-z0-9+/]{86}==_[A-Za-z0-9+/]{22}==$'
+    if re.match(pattern_1, temp_activate_key):
+        split_key = temp_activate_key.split('_')
+        key = split_key[1]
+        key_bytes = b64decode(key.encode('utf-8'))
+        activate_key = aes_decrypt(split_key[0],key_bytes)
+        if activate_key is not None:
+            pattern_2 = r'^[A-Z0-9]{25}_\d{10}$' #check pattern of key
+            check_status = check_key(request,activate_key) #check activate here
+            if re.match(pattern_2, activate_key) and check_status != 'The key has expired.':
+                request.session['keyActivate'] = activate_key
+                request.session['keyShowing'] = temp_activate_key
+                request.session['isActivated'] = True
+                request.session['isInCorrect'] = 2 #success activate
+                return activation_key(request,isInCorrect)
+            else:
+                #print("Key has expired or not in pattern")
+                request.session['isActivated'] = False
+                request.session['isInCorrect'] = 1 #failed activate
+                request.session['keyActivate'] = ''
+                request.session['keyShowing'] = ''
+                request.session['response_txt'] = 'Key has expired or invalid'
+                return redirect('response_activated')
+        else: 
+            #print("Key is empty")
+            request.session['isInCorrect'] = 1 #failed activate (key is empty)
+            request.session['isActivated'] = False
+            request.session['keyActivate'] = ''
+            request.session['keyShowing'] = ''
+            request.session['response_txt'] = 'Key is empty'
+            return redirect('response_activated')
+    else:
+        #print("Key is not in pattern")
+        request.session['isInCorrect'] = 1 #Key is not in pattern
+        request.session['isActivated'] = False
+        request.session['keyActivate'] = ''
+        request.session['keyShowing'] = ''
+        request.session['response_txt'] = 'Key is invalid'
+        return redirect('response_activated')
+
+def response_activated(request):
+    isInCorrect = request.session.get('isInCorrect', 0)
+    txt = request.session.get('response_txt', '')
+    context = {
+        'isInCorrect' : isInCorrect,
+        'txt': txt
+    }
+    return render(request,'response_activated.html',context)
 
 def guide(request):
-    return render(request, 'guide.html')
+    isActivated = request.session.get('isActivated', False)
+    keyShowing = request.session.get('keyShowing','')
+    # if not isActivated:
+    #     return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    
+    context = {
+        'isActivated':isActivated,
+        'keyShowing' : keyShowing
+    }
+    return render(request, 'guide.html',context)
 
 def prepare_data(request):
     uploaded_files = []
-
+    limit_upload_num = 3
+    tempFileNum = request.session.get('uploaded_files', [])
+    isActivated = request.session.get('isActivated', False)
+    
+    if not isActivated:
+        return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
+    
+    if len(tempFileNum) < limit_upload_num:
+        request.session['limit_reached'] = False
+    else:
+        request.session['limit_reached'] = True
+        
+    limit_reached = request.session.get('limit_reached', False)
+    #print("prepare_data(request) | Start : ",len(tempFileNum)," | limit : ",limit_reached)
+    
+    # เช็คว่ามีไฟล์อัปโหลดที่เก็บใน session ไหม
+    if 'uploaded_files' in request.session:
+        uploaded_files.extend(request.session['uploaded_files'])
+    
+    tempFileNum = request.session.get('uploaded_files', [])
+    print("After Check File in Session : ",len(tempFileNum))
     if request.method == 'POST':
         if 'uploaded_file' in request.FILES:
             uploaded_file = request.FILES['uploaded_file']
@@ -37,32 +181,78 @@ def prepare_data(request):
             filename = fs.save(uploaded_file.name, uploaded_file)
             uploaded_files.append(filename)
     
-    # เช็คว่ามีไฟล์อัปโหลดที่เก็บใน session ไหม
-    if 'uploaded_files' in request.session:
-        uploaded_files.extend(request.session['uploaded_files'])
-    
-    # เก็บรายชื่อไฟล์อัปโหลดใน session
-    request.session['uploaded_files'] = uploaded_files
-            
-    context = {
-        'uploaded_files': uploaded_files,
-    }
+    tempFileNum = request.session.get('uploaded_files', [])
+    print("After Append TO List : ",len(tempFileNum))
+
+    if len(tempFileNum) < limit_upload_num:
+        # เก็บรายชื่อไฟล์อัปโหลดใน session
+        request.session['uploaded_files'] = uploaded_files
+        request.session['limit_reached'] = False
+        limit_reached = request.session.get('limit_reached', False)
+        tempFileNum = request.session.get('uploaded_files', [])
+        print("Not reach limit : ",len(tempFileNum))
+        context = {
+            'uploaded_files': uploaded_files,
+            'limit_reached': limit_reached,
+            'isActivated':isActivated,
+            'keyActivate' : keyActivate,
+            'keyShowing' : keyShowing
+        }
+    else:
+        tempFileNum = request.session.get('uploaded_files', [])
+        print("Reach limit : ",len(tempFileNum))
+        print("Upload file reached limit at ", limit_upload_num)
+        request.session['limit_reached'] = True
+        limit_reached = request.session.get('limit_reached', False)
+        context = {
+            'uploaded_files': tempFileNum,
+            'limit_reached': limit_reached,
+            'isActivated':isActivated,
+            'keyActivate' : keyActivate,
+            'keyShowing' : keyShowing
+        }
 
     if request.method == 'POST' and 'delete_file' in request.POST:
         filename_to_delete = request.POST['delete_file']
+        tempFileNum = request.session.get('uploaded_files', [])
         
         if filename_to_delete in uploaded_files:
             uploaded_files.remove(filename_to_delete)
+            tempFileNum = uploaded_files
             fs = FileSystemStorage(location='ml_tool/datasets/')
             fs.delete(filename_to_delete)
             if 'uploaded_files' in request.session:
                 request.session['uploaded_files'] = uploaded_files
+                if len(tempFileNum) < limit_upload_num:
+                    request.session['limit_reached'] = False
+                print("Number After Delete: ",len(tempFileNum))
+                print("List : ",tempFileNum)
+                
+    tempFileNum = request.session.get('uploaded_files', [])
+    limit_reached = request.session.get('limit_reached', False)
+    
+    if len(tempFileNum) < limit_upload_num:
+        request.session['limit_reached'] = False
+        limit_reached = request.session.get('limit_reached', False)
+        context = {
+            'uploaded_files': uploaded_files,
+            'limit_reached': limit_reached,
+            'isActivated':isActivated,
+            'keyActivate' : keyActivate,
+            'keyShowing' : keyShowing
+        }   
+    else:
+        request.session['limit_reached'] = True
+        limit_reached = request.session.get('limit_reached', False)
+        context = {
+            'uploaded_files': tempFileNum,
+            'limit_reached': limit_reached,
+            'isActivated':isActivated,
+            'keyActivate' : keyActivate,
+            'keyShowing' : keyShowing
+        }   
 
     return render(request, 'prepare_data.html', context)
-
-
-
-
 
 #this
 def get_uploaded_dataset(file_name):
@@ -71,6 +261,13 @@ def get_uploaded_dataset(file_name):
     return dataset
 
 def show_dataset(request):
+    isActivated = request.session.get('isActivated', False)
+    if not isActivated:
+        return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    
     dataset = None
     selected_dataset = None
     
@@ -85,8 +282,15 @@ def show_dataset(request):
         elif selected_dataset == 'data':
             dataset = import_Possitive_and_Nagative_dataset()
     
-    context = {'dataset': dataset,
-               'selected_dataset': selected_dataset}
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
+    context = {
+        'dataset': dataset,
+        'selected_dataset': selected_dataset,
+        'isActivated':isActivated,
+        'keyActivate' : keyActivate,
+        'keyShowing' : keyShowing
+    }
     return render(request, 'show_dataset.html', context)
 
 
@@ -94,19 +298,38 @@ def show_uploaded_dataset(request):
     uploaded_file_name = None
     dataset = None
 
+    isActivated = request.session.get('isActivated', False)
+    if not isActivated:
+        return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    
+    if request.method == 'POST' and 'backToPrep' in request.POST:
+        return redirect('prepare_data')
+    
     if request.method == 'POST':
         uploaded_file_name = request.POST.get('uploaded_file_name')
         if uploaded_file_name:
             file_path = f'ml_tool/datasets/{uploaded_file_name}'
             dataset = import_dataset(file_path)
 
+    dataset = dataset[:5000] #limited rows
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
     context = {
         'uploaded_file_name': uploaded_file_name,
-        'dataset': dataset
+        'dataset': dataset,
+        'isActivated':isActivated,
+        'keyActivate' : keyActivate,
+        'keyShowing' : keyShowing
     }
 
     return render(request, 'show_uploaded_dataset.html', context)
 
+def back_to_prepare_date(request):
+    if request.method == 'POST' and 'backToPrep' in request.POST:
+        return redirect('prepare_data')
 
 def import_iris_dataset():
     file_path = 'ml_tool/datasets/iris.data.csv'
@@ -151,8 +374,17 @@ def import_dataset(file_path):
 label_encoder = LabelEncoder()
 def train_model(request):
     global clf, feature_columns, label_encoder
+    
+    isActivated = request.session.get('isActivated', False)
+    if not isActivated:
+        return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    
     uploaded_files = request.session.get('uploaded_files', set())
-
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
 
     if request.method == 'POST':
         dataset_name = request.POST.get('dataset')
@@ -239,13 +471,13 @@ def train_model(request):
             result[column] = X_test[column].tolist()
         result = result.sort_index()
         
-        
+        result = result[:5000]
     
-        return render(request, 'train_result.html', {'accuracy': accuracy, 'result': result.to_html()})
+        return render(request, 'train_result.html', {'accuracy': accuracy, 'result': result.to_html(),'isActivated' : isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
     
     train_history = TrainedModelHistory.objects.all()
 
-    return render(request, 'train.html',{'uploaded_files': uploaded_files,'train_history': train_history})
+    return render(request, 'train.html',{'uploaded_files': uploaded_files,'train_history': train_history,'isActivated' : isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
 
 def delete_history(request, history_id):
     history = TrainedModelHistory.objects.get(id=history_id)
@@ -259,6 +491,15 @@ def delete_all_history(request):
 
 def predict_model(request):
     global feature_columns, label_encoder
+    
+    isActivated = request.session.get('isActivated', False)
+    if not isActivated:
+        return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
 
     if request.method == 'POST':
         input_features = {}
@@ -281,13 +522,22 @@ def predict_model(request):
         else:
             predicted_label = None
 
-        return render(request, 'predict.html', {'feature_columns': feature_columns, 'predicted_label': predicted_label})
+        return render(request, 'predict.html', {'feature_columns': feature_columns, 'predicted_label': predicted_label,'isActivated' : isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
 
-    return render(request, 'predict.html', {'feature_columns': feature_columns})
+    return render(request, 'predict.html', {'feature_columns': feature_columns,'isActivated' : isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
 
 
 def predict_modell(request):
     global feature_columns, label_encoder
+    
+    isActivated = request.session.get('isActivated', False)
+    if not isActivated:
+        return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
     
     if request.method == 'POST':
         input_features = {}
@@ -301,9 +551,9 @@ def predict_modell(request):
         else:
             predicted_label = None
 
-        return render(request, 'predict.html', {'feature_columns': feature_columns, 'predicted_label': predicted_label})
+        return render(request, 'predict.html', {'feature_columns': feature_columns, 'predicted_label': predicted_label,'isActivated' : isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
 
-    return render(request, 'predict.html', {'feature_columns': feature_columns})
+    return render(request, 'predict.html', {'feature_columns': feature_columns,'isActivated' : isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
 
 
 # บรรทัดหลังจากนี้ไม่เกี่ยว ลองทำแยกออกมา
@@ -363,7 +613,129 @@ def train_and_predict(request):
 
         input_vec = vectorizer.transform([input_text])
         predicted_label = clf.predict(input_vec)[0]
+        
+        isActivated = request.session.get('isActivated', False)
+        keyActivate = request.session.get('keyActivate','')
+        keyShowing = request.session.get('keyShowing','')
 
-        return render(request, 'train_and_predict.html', {'input_text': input_text, 'predicted_label': predicted_label})
+        return render(request, 'train_and_predict.html', {'input_text': input_text, 'predicted_label': predicted_label,'isActivated':isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
 
-    return render(request, 'train_and_predict.html')
+    return render(request, 'train_and_predict.html',{'isActivated':isActivated,'keyActivate' : keyActivate,'keyShowing' : keyShowing})
+
+def activation_key(request,isInCorrect):
+    isActivated = request.session.get('isActivated', False)
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
+    request.session['isInCorrect'] = 0
+    isInCorrect = request.session.get('isInCorrect', 0)
+    print("activation_key() isActivated : ",isActivated," | isInCorrect : ", isInCorrect)
+    
+    context = {
+        'isActivated' : isActivated,
+        'isInCorrect': isInCorrect,
+        'keyActivate' : keyActivate,
+        'keyShowing' : keyShowing
+    }
+    context.update(csrf(request))
+    return render(request,'index.html',context)
+
+def back_to_index(request):
+    isActivated = request.session.get('isActivated', False)
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
+    isInCorrect = request.session.get('isInCorrect', 0)
+    context = {
+        'isActivated' : isActivated,
+        'isInCorrect': isInCorrect,
+        'keyActivate' : keyActivate,
+        'keyShowing' : keyShowing
+    }
+    return render(request,'index.html',context)
+
+def manage(request):
+    isActivated = request.session.get('isActivated', False)
+    if not isActivated:
+        return redirect('index')
+    keyStatus = request.session.get('keyStatus','')
+    if keyStatus == 'The key has expired.':
+        return expired_key(request)
+    
+    keyActivate = request.session.get('keyActivate','')
+    keyShowing = request.session.get('keyShowing','')
+    context = {
+        'isActivated': isActivated,
+        'keyActivate' : keyActivate,
+        'expirationDate': '',
+        'keyStatus': keyStatus,
+        'keyShowing' : keyShowing,
+    }
+    if keyActivate:
+        split_key = keyActivate.split('_')
+        epoch_timestamp = split_key[1]
+        request.session['keyStatus'] = check_key(request,keyActivate)
+        format_date(epoch_timestamp)
+        keyStatus = request.session.get('keyStatus','')
+        context = {
+            'isActivated': isActivated,
+            'keyActivate' : keyActivate,
+            'expirationDate': format_date(epoch_timestamp),
+            'keyStatus': keyStatus,
+            'keyShowing' : keyShowing,
+        }
+
+    return render(request,'manage.html', context)
+
+def generate_random_text(length):
+    letters = string.ascii_letters  # All a-z upper and lowercase letters
+    random_text = ''.join(random.choice(letters) for _ in range(length))
+    return random_text
+
+def check_key(request,tempKey):
+    status = ''
+    epoch = tempKey.split("_")
+    formatted_date = datetime.datetime.strptime(format_date(epoch[1]), "%d/%m/%Y %H:%M")
+    current_date = datetime.datetime.now()
+    
+    time_difference = formatted_date - current_date
+    days_left = time_difference.days
+    #print("formatted_date: ",formatted_date," | current: ",current_date," | time-dif: ",time_difference," | day-left: ",days_left)
+    if days_left > 7:
+        status = 'Activated'
+    elif days_left <= 7 and days_left > 0:
+        status = str(days_left) + ' Days left'
+    elif days_left == 0:
+        status = 'The key expires in 24 hours'
+    else:
+        reset_activation(request)
+        status = 'The key has expired.'
+    return status
+
+def format_date(ep_time): 
+    dt = datetime.datetime.fromtimestamp(int(ep_time))
+    formatted_date = dt.strftime("%d/%m/%Y %H:%M")
+    return formatted_date
+
+def aes_encrypt(plaintext, key):
+    cipher = AES.new(key, AES.MODE_CBC)
+    ciphertext = cipher.encrypt(pad(plaintext.encode('utf-8'), AES.block_size))
+    return b64encode(cipher.iv + ciphertext).decode('utf-8')
+
+def aes_decrypt(ciphertext, key):
+    ciphertext = b64decode(ciphertext)
+    iv = ciphertext[:AES.block_size]
+    ciphertext = ciphertext[AES.block_size:]
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
+    return plaintext.decode('utf-8')
+
+
+def get_key_status(request):
+    keyActivate = request.session.get('keyActivate', '')
+    request.session['keyStatus'] = check_key(request, keyActivate)
+    keyStatus = request.session['keyStatus']
+    #print('get_key_status() | keyActivate:',keyActivate," | keyStatus: ",request.session['keyStatus'])
+    
+    if keyStatus == 'The key has expired.':
+        reset_activation(request)
+        
+    return JsonResponse({'status': keyStatus})

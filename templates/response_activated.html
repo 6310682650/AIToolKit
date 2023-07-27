@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+    <main class="response">
+        <div class="response2">
+            <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+                <div class="text-center">
+                    <div>
+                        <div class="mb-3">
+                            <p style="font-size:4vh;"><b>{{ txt }}</b></p>
+                        </div>
+                        <div><p style="font-size:1.5vh;">The key you entered is invalid or the key has expired. Please check your key again.</p></div>
+                        {% if isInCorrect == 2 %}
+                            <div class="row justify-content-center">
+                                <div class="col">
+                                    <form class="my-3 row justify-content-center" method="POST" action="{% url 'index' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" id="reActivate" name="reActivate" value="False">
+                                        <button class="col-auto" type="submit" class="btn" style="background-color:#E77600; width:50vh; font-size:1.8vh;">Back</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+                    
+                        {% if isInCorrect == 1 %}
+                            <div class="row justify-content-center">
+                                <div class="col">
+                                    <form class="my-3 row justify-content-center" method="POST" action="{% url 'index' %}">
+                                        {% csrf_token %} 
+                                        <input type="hidden" id="reActivate" name="reActivate" value="True">
+                                        <button type="submit" class="btn" style="background-color:#E77600; width:50vh; font-size:2vh;">Back</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

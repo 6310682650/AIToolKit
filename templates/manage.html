@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+    <main class="manage">
+        <div class="d-flex justify-content-center">
+            <div class="key-info col-8 m-5 p-5 align-items-center">
+                {% load static %}
+                <div class="row my-2 me-5">
+                    <div class="col text-center align-items-center">
+                        <img src="{% static 'images\logo.png' %}" alt="Logo" style="height:10vh">
+                    </div>
+                </div>
+                <div class="row my-2 align-items-center">
+                    <div class="col">
+                        <div class="row"><p><b>Key : </b>{{ keyShowing }}</p></div>
+                        <div class="row"><p><b>Expiration Date : </b>{{ expirationDate }}</p></div>
+                        <div class="row"><p id="status"><b>Status : </b> {{ keyStatus }}</p></div>
+                        <div class="row">
+                            <form id="reActivateForm" method="POST" action="{% url 'index' %}">
+                                {% csrf_token %} 
+                                <input type="hidden" id="reActivate" name="reActivate" value="True">
+                                <button class="btn" style="background-color:#E77600; width:50vh; font-size:2vh;">Reactivate Key</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function getKeyStatus() {
+            tempUrl = "{% url 'get_key_status' %}"
+            $.ajax({
+                url: tempUrl,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    console.log(data.status);
+                },
+                error: function(error) {
+                    console.error("Error occurred:", error);
+                }
+            });
+        }
+        setInterval(getKeyStatus, 300000);
+    </script>
+{% endblock %}

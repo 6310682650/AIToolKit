@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Machine Learning Toolkit</title>
-
+    
     {% block style %}{% endblock %}
+    {% comment %} Font Awesome {% endcomment %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    {% comment %} Bootstrap {% endcomment %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    {% comment %} JQuery {% endcomment %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -381,6 +391,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #f9f9f9;
+            width:70%;
         }
 
         .container_guide h2 {
@@ -460,25 +471,109 @@
             font-size: 14px;
             line-height: 1.6;
         }
-          
+
         code {
             font-size: 14px;
             background-color: #f4f4f4;
             padding: 3px 5px;
         }
 
-
         .tooltip-icon {
             font-size: 20px;
             transition: font-size 0s;
             padding: 5px;
         }
-        
+
         .tooltip-icon:hover {
             color:orange;
         }
         
+        /* เพิ่มเติม */
+        .login-modal-style{
+            border-radius: 5px;
+            background-color: rgba(0,0,0,0.45);
+            backdrop-filter: blur(2px);
+            box-shadow: 0 0 40px rgba(8,7,16,0.6);
+            padding:20px;
+        }
+        .login-modal-style input{
+            display: block;
+            height: 50px;
+            width: 100%;
+            color: black;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 3px;
+            padding: 0 10px;
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 300;
+        }
+        
+        .login-modal-style button{
+            margin-top: 50px;
+            width: 100%;
+            background-color: rgba(0,0,0,0.4);
+            color: white;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .login-modal-style label{
+            color:white;
+        }
+        
+        .login-modal-style h1{
+            color:white;
+        }
+        .close-login-button{
+            font-size: 24px;
+            color: white; 
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        
+        .key-info{
+            border:none;
+            background-color: #FCEBEB;
+            width:100vh;
+            font-size: 2vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(8,7,16,0.6);
+            word-break: break-all;
+        }
+        
+        .manage {
+            background-image: url('/static/images/bg.png');
+            background-size:cover;
+            background-repeat: no-repeat;
+            background-position:center;
+            background-attachment: fixed;
+            height:100vh;
+        }
 
+        .response{
+            background-image: url('/static/images/bs2.png');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            padding: inherit;
+            padding: 0;
+            position: fixed;
+            width:200vh; /*เพิ่มเติม*/
+        }
+
+        .response2{
+            position: fixed;
+            left: 25%;
+            bottom:5%;
+        }
     </style>
     {% block head %}
     
@@ -494,14 +589,132 @@
                 {% load static %}
                 <a href="{% url 'index' %}"><img src="{% static 'images\logo.png' %}" alt="Logo"></a>
             </div>
-            <ul class="nav-links">
-                <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
-                <li><a href="{% url 'train' %}">Train Model</a></li>
+            <ul class="nav-links align-items-center my-2">
+                {% if isActivated %}
+                    <li><a href="{% url 'prepare_data' %}">Prepare Data</a></li>
+                    <li><a href="{% url 'train' %}">Train Model</a></li>
+                {% endif %}
                 <li><a href="{% url 'guide' %}">Guide</a></li>
+                {% if not isActivated %}
+                    <li>
+                        <a id="openActivate" href="#" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fa-solid fa-key" style="color: #ffffff;"></i>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if isActivated %}
+                    <a class="nav-link dropdown no-caret" href="{% url 'manage' %}" id="userDropdown">
+                        <i class="fa-solid fa-key" style="color: #ffc800;"></i>
+                    </a>
+                {% endif %}
             </ul>
           </nav>
     </header>
-    
+    {% load static %}
+    <div class="modal fade" id="loginModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content login-modal-style">
+                <div class="d-flex justify-content-end me-3 mt-2">
+                    <span class="close close-login-button" id="btnClose" data-bs-dismiss="modal" aria-label="Close">&times;</span>
+                </div>
+                <h1 class="text-center" id="loginModalLabel">Key Activate</h1>
+                <div class="modal-body" id="formContainer">
+                    <form id="activateForm" method="POST" action="{% url 'index' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" placeholder="Your key..." id="activate_key" name="activate_key">
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button type="submit" id="activateBtn" class="mt-6">Activate</button>
+                        </div>
+                    </form>
+                </div>
+                {% comment %} {% if isIncorrect == 2 %} {% endcomment %}
+                <div class="modal-body" id="activationCompleteMsg" style="display: none;">
+                    <div><h1 class="text-center" style="color:#70DF2F">Activation Complete!</h1></div>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <button type="submit" id="activateBtn" class="mt-6" data-bs-dismiss="modal" id="closeSuccessBtn">Close</button>
+                    </div>
+                </div>
+                {% comment %} {% endif %}
+                {% if isIncorrect == 1 %} {% endcomment %}
+                <div class="modal-body" id="invalidMsg" style="display: none;">
+                    <div><h1 class="text-center" style="color:#70DF2F">The key you entered is invalid or incorrect. Please double-check the key and try again.</h1></div>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <button type="submit" id="activateBtn" class="mt-6" data-bs-dismiss="modal" id="closeInvalidBtn">Close</button>
+                    </div>
+                </div>
+                {% comment %} {% endif %} {% endcomment %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            var loginModal = document.getElementById("loginModal");
+            var btnOpenActivate = document.getElementById("openActivate");
+            var btnClose = document.getElementById("btnClose");
+
+            //isIncorrect = {{ isInCorrect }}
+
+            //document.getElementById('activateBtn').addEventListener('click', function(e) {
+            document.getElementById("activateForm").addEventListener("submit", function(event) {
+                //event.preventDefault();
+                checkIsIncorrect();
+            });  
+
+            if(btnOpenActivate){
+                btnOpenActivate.onclick = function() {
+                    loginModal.style.display = "block";
+                }
+            }
+            if(btnClose){
+                btnClose.onclick = function() {
+                    loginModal.style.display = "none";
+                }
+            }
+            var closeSuccessBtn = document.getElementById("closeSuccessBtn");
+            if(closeSuccessBtn){
+                closeSuccessBtn.addEventListener("click", function () {
+                    // Add any additional logic here if needed
+                    document.getElementById("loginModal").style.display = "none"; // Hide the modal
+                });
+            }
+            
+
+            var closeInvalidBtn = document.getElementById("closeInvalidBtn");
+            if(closeInvalidBtn){
+                closeInvalidBtn.addEventListener("click", function () {
+                    // Add any additional logic here if needed
+                    document.getElementById("loginModal").style.display = "none"; // Hide the modal
+                });
+            }
+            
+        });
+        function checkIsIncorrect() {
+            fetch('{% url "index" %}')
+                .then(response => response.json())
+                .then(data => {
+                    var isIncorrect = data.isIncorrect;
+                    if (isIncorrect == 2) { // Success
+                        document.getElementById("formContainer").style.display = "none";
+                        document.getElementById("activationCompleteMsg").style.display = "block";
+                        document.getElementById("invalidMsg").style.display = "none";
+                    } else if (isIncorrect == 1) { // Invalid
+                        document.getElementById("formContainer").style.display = "none";
+                        document.getElementById("activationCompleteMsg").style.display = "none";
+                        document.getElementById("invalidMsg").style.display = "block";
+                    } else { // Default
+                        document.getElementById("activationCompleteMsg").style.display = "none";
+                        document.getElementById("invalidMsg").style.display = "none";
+                        document.getElementById("formContainer").style.display = "block";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching isIncorrect:', error);
+                });
+        }
+    </script>
     {% block content %}
     {% endblock %}
 

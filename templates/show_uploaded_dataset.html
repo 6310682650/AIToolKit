@@ -3,25 +3,34 @@
 <main>
     <br><br><br>
     {% if dataset %}
-        <h2>Uploaded Dataset Preview</h2>
-        <table>
-            <thead>
-                <tr>
-                    {% for key in dataset.0.keys %}
-                        <th>{{ key }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in dataset %}
+        <div class="row d-flex justify-content-start" >
+            <h2 class="col-auto mb-5 me-2">Uploaded Dataset Preview</h2>
+            <form class="col-auto" method="post" action="{% url 'show_uploaded_dataset' %}">
+                {% csrf_token %}
+                <input type="hidden" name="backToPrep" id="backToPrep" value="">
+                <button type="submit">Back</button>
+            </form>
+        </div>
+        <div>
+            <table>
+                <thead>
                     <tr>
-                        {% for value in row.values %}
-                            <td>{{ value }}</td>
+                        {% for key in dataset.0.keys %}
+                            <th>{{ key }}</th>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for row in dataset %}
+                        <tr>
+                            {% for value in row.values %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <p>No uploaded dataset found.</p>
     {% endif %}

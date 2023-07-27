@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <main>
 <br><br><br>
     <h2>Prepare Dataset</h2>
@@ -9,19 +8,30 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="uploaded_file" accept=".csv, .xlsx, .txt">
-        <button type="submit">Upload</button>
-        <span data-toggle="tooltip" data-placement="top" title="First row of the dataset file contains the column headers,
-        and the first column represents the target variable we want to predict.">
+        <button type="submit" id="upload_file_btn">Upload</button>
+        <span data-toggle="tooltip" data-placement="top" title="First row of the dataset file contains the column headers, and the first column represents the target variable we want to predict.">
             <i class="fas fa-question-circle tooltip-icon"></i>
         </span>
-          
-        {% comment %} <span class="tooltip">
-            <span class="material-symbols-outlined">help</span>
-            <span class="tooltip-text">First row of the dataset file contains the column headers, <br>
-                and the first column represents the target variable we want to predict.</span>
-        </span>     {% endcomment %}
+        <span id="limit_message" style="color:red; display:none;">Upload file reached limit. Cannot proceed.</span>
     </form>
-    
+    <script>
+        var uploadButton = document.getElementById('upload_file_btn'); //เพิ่ม id ให้ปุ่มอัพโหลด
+        var limitMessage = document.getElementById('limit_message');
+        var limitReached = {{ limit_reached|lower }};
+        if (uploadButton) {
+            uploadButton.addEventListener('click', function(e) {
+                if (limitReached) {
+                    console.log("limitReached")
+                    e.preventDefault(); //ไม่ส่งข้อมูล
+                    limitMessage.style.display = 'block';
+                    limitMessage.style.color = 'red';
+                }else{
+                    console.log("not limitReached")
+                    limitMessage.style.display = 'none';
+                }
+            });
+        }
+    </script>
     <br>
 
     <table>
