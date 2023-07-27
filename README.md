@@ -17,5 +17,5 @@ Library installed
 - pip install scikit-learn
 - pip install pycryptodome
 
-Key สำหรับทดลอง activate (หมดอายุ 2023-07-27 17:00)
-  p8YiwaVSXEQz9n5To4Z0F2lteWE5PahWKH6VmWxtUl5LbfRGSvnP8EWbz9+BvZWXWvMXyoFA7adIcoS0HE7C0A==_yS9R6arROB+uJZduHhJi2Q==
+Key สำหรับทดลอง activate (หมดอายุ 2023-08-30 09:00)
+  - aRi7fMtU+gMQW6+UJ5YrNIcMbcaugZE7sJbSkxAqTpeTAhW3LihqdWZH2t9j5NwC4yg0NeVXeP/Ok65iMtUC3Q==_RRCsy+/iWJIAmijPhcMWYA==
